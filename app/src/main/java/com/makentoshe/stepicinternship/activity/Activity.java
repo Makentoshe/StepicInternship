@@ -14,41 +14,52 @@ public abstract class Activity<Logic extends DefaultActivityLogic> extends AppCo
 
     private Logic mActivityLogic;
 
+    public abstract Logic newLogicInstance();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivityLogic = (Logic) new DefaultActivityLogic();
-        mActivityLogic.onCreate(savedInstanceState);
+        mActivityLogic = newLogicInstance();
+        mActivityLogic._onCreate(savedInstanceState);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mActivityLogic.onStart();
+        mActivityLogic._onStart();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mActivityLogic.onDestroy();
-        mActivityLogic = null;
+        mActivityLogic._onDestroy();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mActivityLogic.onStop();
+        mActivityLogic._onStop();
+    }
+
+    @Override
+    public boolean isFinishing() {
+        mActivityLogic = null;
+        return super.isFinishing();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mActivityLogic.onResume();
+        mActivityLogic._onResume();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        mActivityLogic.onRestart();
+        mActivityLogic._onRestart();
+    }
+
+    public Logic getLogic(){
+        return mActivityLogic;
     }
 }

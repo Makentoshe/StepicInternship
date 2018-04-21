@@ -4,21 +4,34 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 /**
- * Created by Makentoshe on 21.04.2018.
+ * Все методы, начинающиеся с "_" вызываются перед вызовами методов UI класса(где-то в районе super).
+ * Далее вызываются методы UI(их в этом классе нет)
+ * Остальные методы вызываются после UI
  */
-
 public abstract class ActivityLogic {
+
+    protected abstract void _onCreate(@Nullable Bundle savedInstanceState);
+
+    protected abstract void _onStart();
+
+    protected abstract void _onDestroy();
+
+    protected abstract void _onStop();
+
+    protected abstract void _onResume();
+
+    protected abstract void _onRestart();
 
     protected abstract void onCreate(@Nullable Bundle savedInstanceState);
 
-    protected abstract void onStart();
+    protected void onStart(){}
 
-    protected abstract void onDestroy();
+    protected  void onDestroy(){}
 
-    protected abstract void onStop();
+    protected  void onStop(){}
 
-    protected abstract void onResume();
+    protected  void onResume(){}
 
-    protected abstract void onRestart();
+    protected  void onRestart(){}
 
 }
