@@ -57,12 +57,5 @@ freeline_project_description.json
 *.cmd
 
 #Something else
-*.iml
-.gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
 .DS_Store
-/build
 /captures
-.externalNativeBuild
