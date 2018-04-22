@@ -6,22 +6,24 @@
     android:minHeight="?attr/actionBarSize"
     android:theme="?attr/toolbarStyle">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/activity_main_toolbar_appname"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/app_name"
-            android:textSize="30sp"
-            android:layout_weight="11"
-            android:textStyle="bold" />
+        <com.makentoshe.stepicinternship.view.DelayAutoCompleteTextView
+            android:id="@+id/ActivityMain_Toolbar_SearchTextView"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/rounded_quad"
+            android:hint="@string/search_string_ex"
+            android:textColorHint="@color/hint_font"
+            android:textColor="@color/font"
+            android:elevation="2dp"/>
 
-    </LinearLayout>
+    </FrameLayout>
 
 </android.support.v7.widget.Toolbar>
