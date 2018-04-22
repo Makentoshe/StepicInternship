@@ -6,9 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Created by Makentoshe on 22.04.2018.
+ * Class for describing autocomplete response.
  */
-
 public class AutoCompleteModel {
 
     @SerializedName("meta")
@@ -34,4 +33,57 @@ public class AutoCompleteModel {
         this.queries = queries;
     }
 
+    public class Query {
+
+        @SerializedName("text")
+        @Expose
+        private String text;
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+    }
+
+    public class Meta {
+
+        @SerializedName("page")
+        @Expose
+        private Integer page;
+        @SerializedName("has_next")
+        @Expose
+        private Boolean hasNext;
+        @SerializedName("has_previous")
+        @Expose
+        private Boolean hasPrevious;
+
+        public Integer getPage() {
+            return page;
+        }
+
+        public void setPage(Integer page) {
+            this.page = page;
+        }
+
+        public Boolean getHasNext() {
+            return hasNext;
+        }
+
+        public void setHasNext(Boolean hasNext) {
+            this.hasNext = hasNext;
+        }
+
+        public Boolean getHasPrevious() {
+            return hasPrevious;
+        }
+
+        public void setHasPrevious(Boolean hasPrevious) {
+            this.hasPrevious = hasPrevious;
+        }
+
+    }
 }

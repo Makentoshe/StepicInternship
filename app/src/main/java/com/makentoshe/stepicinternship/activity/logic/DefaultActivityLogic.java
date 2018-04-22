@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import java.util.logging.Logger;
 
 /**
- * Стандартная имплементация класса ActivityLogic
+ * Default ActivityLogic implementation
  */
 public class DefaultActivityLogic extends ActivityLogic {
 

@@ -13,9 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Makentoshe on 05.03.2018.
+ * Базовый адаптер для автодополнения.
  */
-
 public class BaseAutoCompleteAdapter extends BaseAdapter implements Filterable {
 
     protected final static int MAX_COUNT = 10;
@@ -63,7 +62,7 @@ public class BaseAutoCompleteAdapter extends BaseAdapter implements Filterable {
     /** {@inheritDoc} */
     @Override
     public Filter getFilter(){
-        throw new RuntimeException("Write me");
+        throw new RuntimeException("That's very bad, that the filter was not written yet.");
     }
 
 }

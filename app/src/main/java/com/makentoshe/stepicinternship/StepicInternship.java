@@ -7,10 +7,6 @@ import com.makentoshe.stepicinternship.common.StepicAPI;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Created by Makentoshe on 22.04.2018.
- */
-
 public class StepicInternship extends Application {
 
     private static StepicAPI stepicAPI;

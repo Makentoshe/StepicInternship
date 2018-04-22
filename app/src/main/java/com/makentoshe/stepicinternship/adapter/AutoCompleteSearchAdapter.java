@@ -5,21 +5,17 @@ import android.widget.Filter;
 
 import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.common.model.AutoCompleteModel;
-import com.makentoshe.stepicinternship.common.model.Query;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
 import retrofit2.Response;
 
 /**
- * Created by Makentoshe on 22.04.2018.
+ * Custom adapter for autocomplete that make calls to the server.
  */
-
 public class AutoCompleteSearchAdapter extends BaseAutoCompleteAdapter{
-
 
     public AutoCompleteSearchAdapter(Context context) {
         super(context);
@@ -57,14 +53,14 @@ public class AutoCompleteSearchAdapter extends BaseAutoCompleteAdapter{
     /**
      * <p>Returns a list with tips, that may help to find something or reduce input time.</p>
      *
-     * @param term  the string for which searching
+     * @param term the string for which searching
      * @return a list of the strings which contain a tips.
      */
     private List<String> checkSearches(String term) {
         try{
             Response response = StepicInternship.getApi().getAutocompleteData(term).execute();
             ArrayList<String> queries = new ArrayList<>();
-            for (Query query : ((AutoCompleteModel)response.body()).getQueries()){
+            for (AutoCompleteModel.Query query : ((AutoCompleteModel)response.body()).getQueries()){
                 queries.add(query.getText());
             }
             return queries;

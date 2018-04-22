@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 /**
- * Все методы, начинающиеся с "_" вызываются перед вызовами методов UI класса(где-то в районе super).
- * Далее вызываются методы UI(их в этом классе нет)
- * Остальные методы вызываются после UI исключительно ручками.
+ * All methods, which starts with "_" calls before UI methods (in the end of the super method)
+ * Then calls UI methods
+ * Another methods calls after UI solely by handles.
  */
 public abstract class ActivityLogic {
 

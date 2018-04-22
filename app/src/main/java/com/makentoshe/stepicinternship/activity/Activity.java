@@ -6,10 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.makentoshe.stepicinternship.activity.logic.DefaultActivityLogic;
 
-/**
- * Created by Makentoshe on 21.04.2018.
- */
-
 public abstract class Activity<Logic extends DefaultActivityLogic> extends AppCompatActivity {
 
     private Logic mActivityLogic;
