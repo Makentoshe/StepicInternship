@@ -51,7 +51,6 @@ public class FragmentMainContent extends Fragment {
 
     private void updateView(ArrayList<SearchModel.SearchResult> newResults){
         coursesDataList.clear();
-        mAdapter.notifyDataSetChanged();
         coursesDataList.addAll(newResults);
         mAdapter.notifyDataSetChanged();
     }
