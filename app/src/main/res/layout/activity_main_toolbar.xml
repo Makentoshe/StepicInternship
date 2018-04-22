@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/activity_main_toolbar"
+    android:id="@+id/ActivityMain_Toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:minHeight="?attr/actionBarSize"
@@ -14,6 +14,8 @@
             android:id="@+id/ActivityMain_Toolbar_SearchTextView"
             android:layout_width="match_parent"
             android:layout_height="42dp"
+            android:maxLines="1"
+            android:singleLine="true"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
             android:layout_marginTop="12dp"

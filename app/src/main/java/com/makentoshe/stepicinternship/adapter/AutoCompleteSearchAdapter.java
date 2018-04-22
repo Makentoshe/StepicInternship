@@ -58,7 +58,7 @@ public class AutoCompleteSearchAdapter extends BaseAutoCompleteAdapter{
      */
     private List<String> checkSearches(String term) {
         try{
-            Response response = StepicInternship.getApi().getAutocompleteData(term).execute();
+            Response response = StepicInternship.getApi().getAutocompleteResult(term).execute();
             ArrayList<String> queries = new ArrayList<>();
             for (AutoCompleteModel.Query query : ((AutoCompleteModel)response.body()).getQueries()){
                 queries.add(query.getText());

@@ -8,14 +8,28 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Toast;
+
+import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.activity.logic.DefaultActivityLogic;
 
 import com.makentoshe.stepicinternship.R;
+import com.makentoshe.stepicinternship.adapter.AutoCompleteSearchAdapter;
+import com.makentoshe.stepicinternship.common.model.SearchModel;
 import com.makentoshe.stepicinternship.fragment.FragmentFavoriteContent;
 import com.makentoshe.stepicinternship.fragment.FragmentMainContent;
+import com.makentoshe.stepicinternship.view.DelayAutoCompleteTextView;
 
+import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.http.Query;
 
 public class ActivityMain extends Activity<ActivityMain.ActivityMainLogic> {
 
@@ -32,8 +46,8 @@ public class ActivityMain extends Activity<ActivityMain.ActivityMainLogic> {
         getLogic().onCreate(savedInstanceState);
     }
 
-    private void createToolbar(){
-        Toolbar toolbar = findViewById(R.id.activity_main_toolbar);
+    private void createToolbar() {
+        Toolbar toolbar = findViewById(R.id.ActivityMain_Toolbar);
     }
 
 
@@ -42,25 +56,68 @@ public class ActivityMain extends Activity<ActivityMain.ActivityMainLogic> {
      */
     class ActivityMainLogic extends DefaultActivityLogic {
 
+        private WeakReference<FragmentMainContent> fragmentMainContentWeakReference;
+
         //Вызывается после UI
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            createTabs();
+            createSearchTextView();
+        }
+
+        private void createTabs() {
             ViewPager viewPager = findViewById(R.id.pager);
             ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-            adapter.addFragment(FragmentMainContent.newInstance(), "Catalog");
+
+            FragmentMainContent fragmentMainContent = FragmentMainContent.newInstance();
+            adapter.addFragment(fragmentMainContent, "Catalog");
+            fragmentMainContentWeakReference = new WeakReference<>(fragmentMainContent);
+
             adapter.addFragment(FragmentFavoriteContent.newInstance(), "Favorites");
             viewPager.setAdapter(adapter);
-
             TabLayout tabLayout = findViewById(R.id.tabs);
             tabLayout.setupWithViewPager(viewPager);
         }
 
-        // Adapter for the viewpager using FragmentPagerAdapter
+        private void createSearchTextView() {
+            DelayAutoCompleteTextView searchTextView = findViewById(R.id.ActivityMain_Toolbar_SearchTextView);
+            AutoCompleteSearchAdapter adapter = new AutoCompleteSearchAdapter(ActivityMain.this);
+            searchTextView.setAdapter(adapter);
+            searchTextView.setOnItemClickListener((parent, view, position, id) ->
+                    startSearch(true, true,
+                            "ru", adapter.getItem(position), "course"));
+            searchTextView.setOnEditorActionListener((textView, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    startSearch(true, true,
+                            "ru", searchTextView.getText().toString(), "course");
+                    return true;
+                }
+                return false;
+            });
+        }
 
-        /**
-         * Адаптер для ViewPager использующий FragmentPagerAdapter
-         */
+        private void startSearch(boolean is_popular, boolean is_public,
+                                 String language, String query, String type) {
+
+            Call<SearchModel> call = StepicInternship.getApi().getSearchResult(is_popular, is_public, language, query, type);
+            call.enqueue(new Callback<SearchModel>() {
+                @Override
+                public void onResponse(Call<SearchModel> call, Response<SearchModel> response) {
+                    SearchModel model = response.body();
+                    fragmentMainContentWeakReference.get().receiveSearchModel(model);
+                }
+
+                @Override
+                public void onFailure(Call<SearchModel> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "Something go wrong", Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                }
+            });
+
+        }
+
+        // Adapter for the viewpager using FragmentPagerAdapter
         class ViewPagerAdapter extends FragmentPagerAdapter {
             private final List<Fragment> mFragmentList = new ArrayList<>();
             private final List<String> mFragmentTitleList = new ArrayList<>();

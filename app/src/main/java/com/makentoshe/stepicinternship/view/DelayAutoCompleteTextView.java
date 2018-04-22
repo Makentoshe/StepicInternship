@@ -24,7 +24,7 @@ public class DelayAutoCompleteTextView extends AppCompatAutoCompleteTextView {
     private SoftReference<Handler> mHandler;
 
     private SoftReference<Handler> createHandler(){
-       mHandler = new SoftReference<Handler>(new Handler(Looper.getMainLooper()) {
+       mHandler = new SoftReference<>(new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 DelayAutoCompleteTextView.super.performFiltering((CharSequence) msg.obj, msg.arg1);
