@@ -6,9 +6,8 @@ import android.support.annotation.Nullable;
 import java.util.logging.Logger;
 
 /**
- * Created by Makentoshe on 21.04.2018.
+ * Стандартная имплементация класса ActivityLogic
  */
-
 public class DefaultActivityLogic extends ActivityLogic {
 
     private Logger log = Logger.getLogger(DefaultActivityLogic.class.getName());

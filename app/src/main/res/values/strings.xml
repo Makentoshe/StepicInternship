@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">StepicInternship</string>
+    <string name="search_string_ex">Search catalog</string>
 </resources>

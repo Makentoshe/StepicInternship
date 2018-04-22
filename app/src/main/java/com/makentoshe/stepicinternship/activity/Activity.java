@@ -31,8 +31,8 @@ public abstract class Activity<Logic extends DefaultActivityLogic> extends AppCo
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         mActivityLogic._onDestroy();
+        super.onDestroy();
     }
 
     @Override
