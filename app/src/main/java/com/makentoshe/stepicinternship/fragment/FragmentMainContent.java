@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.makentoshe.stepicinternship.R;
+import com.makentoshe.stepicinternship.adapter.AutoCompleteSearchAdapter;
+import com.makentoshe.stepicinternship.view.DelayAutoCompleteTextView;
 
 /**
  * Created by Makentoshe on 21.04.2018.
@@ -25,7 +27,9 @@ public class FragmentMainContent extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_maincontent, container, false);
-//        DelayAutoCompleteTextView searchET = root.findViewById(R.id.ActivityPreviewBoor_Body_DrawerPanel_DelayAutoCompleteTextView);
+        DelayAutoCompleteTextView searchTextView = getActivity().findViewById(R.id.ActivityMain_Toolbar_SearchTextView);
+        AutoCompleteSearchAdapter adapter = new AutoCompleteSearchAdapter(getContext());
+        searchTextView.setAdapter(adapter);
         return root;
     }
 }
