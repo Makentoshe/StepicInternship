@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.makentoshe.stepicinternship.R;
 import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
+import com.makentoshe.stepicinternship.common.model.UserModel;
 
 import java.util.List;
 
@@ -52,6 +53,7 @@ public class CourseArrayAdapter extends ArrayAdapter<SearchModel.SearchResult> {
         //fill view
         title.setText(result.getCourseTitle());
         setBitmap(result.getCourseCover(), previewImage);
+        setAuthor(result.getCourseAuthors(), author);
         return rowView;
     }
 
@@ -74,6 +76,25 @@ public class CourseArrayAdapter extends ArrayAdapter<SearchModel.SearchResult> {
                     }
                 }
         );
+    }
+
+    private void setAuthor(List<Integer> authorsId, TextView view){
+        StringBuilder sb = new StringBuilder();
+        for(Integer id : authorsId){
+            Call<UserModel> call = StepicInternship.getApi().getUser(id);
+            call.enqueue(new Callback<UserModel>() {
+                @Override
+                public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                    sb.append(", ").append(response.body().getUsers().get(0).getFullName());
+                    view.setText(sb.toString().substring(2));
+                }
+
+                @Override
+                public void onFailure(Call<UserModel> call, Throwable t) {
+
+                }
+            });
+        }
     }
 
 }

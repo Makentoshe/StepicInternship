@@ -2,10 +2,13 @@ package com.makentoshe.stepicinternship.common;
 
 import com.makentoshe.stepicinternship.common.model.AutoCompleteModel;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
+import com.makentoshe.stepicinternship.common.model.UserModel;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Part;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
 
@@ -30,4 +33,7 @@ public interface StepicAPI {
 
     @GET
     Call<ResponseBody> getCover(@Url String url);
+
+    @GET("/api/users/{USER_ID}")
+    Call<UserModel> getUser(@Path("USER_ID") int id);
 }
