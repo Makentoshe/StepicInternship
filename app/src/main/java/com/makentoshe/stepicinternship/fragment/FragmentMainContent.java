@@ -7,15 +7,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.makentoshe.stepicinternship.R;
+import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.adapter.CourseArrayAdapter;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
- * Created by Makentoshe on 21.04.2018.
+ * Fragment contain list of courses.
  */
 public class FragmentMainContent extends Fragment {
 
@@ -30,6 +36,10 @@ public class FragmentMainContent extends Fragment {
         return fragment;
     }
 
+    /**
+     * Called when need to parse and update courses view and data.
+     * @param searchModel model with courses data in it.
+     */
     public void receiveSearchModel(SearchModel searchModel){
         updateView((ArrayList<SearchModel.SearchResult>) searchModel.getSearchResults());
     }
@@ -43,11 +53,35 @@ public class FragmentMainContent extends Fragment {
         mAdapter = new CourseArrayAdapter(getContext(), coursesDataList);
         // DataBind ListView with items from ArrayAdapter
         coursesList.setAdapter(mAdapter);
+        start();
         return root;
     }
 
+    /**
+     * Load courses by default to show.
+     */
+    private void start() {
+        Call<SearchModel> call = StepicInternship.getApi().getSearchResult(true, true, "ru", "", "course");
+        call.enqueue(new Callback<SearchModel>() {
+            @Override
+            public void onResponse(Call<SearchModel> call, Response<SearchModel> response) {
+                SearchModel model = response.body();
+                receiveSearchModel(model);
+            }
 
+            @Override
+            public void onFailure(Call<SearchModel> call, Throwable t) {
+                Toast.makeText(getActivity().getApplicationContext(), "Something go wrong", Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
 
+    }
+
+    /**
+     * Update view to show new loaded courses.
+     * @param newResults list on new courses/
+     */
     private void updateView(ArrayList<SearchModel.SearchResult> newResults){
         coursesDataList.clear();
         coursesDataList.addAll(newResults);
