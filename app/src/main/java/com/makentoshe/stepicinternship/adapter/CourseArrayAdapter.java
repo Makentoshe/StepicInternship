@@ -31,12 +31,13 @@ public class CourseArrayAdapter extends ArrayAdapter<SearchModel.SearchResult> {
 
     private final Context context;
     private final List<SearchModel.SearchResult> values;
+    private final Runnable runnable;
 
-
-    public CourseArrayAdapter(Context context, List<SearchModel.SearchResult> values) {
+    public CourseArrayAdapter(Context context, List<SearchModel.SearchResult> values, Runnable runnable) {
         super(context, R.layout.listview_item_course, values);
         this.context = context;
         this.values = values;
+        this.runnable = runnable;
     }
 
     @NonNull
@@ -54,6 +55,10 @@ public class CourseArrayAdapter extends ArrayAdapter<SearchModel.SearchResult> {
         title.setText(result.getCourseTitle());
         setBitmap(result.getCourseCover(), previewImage);
         setAuthor(result.getCourseAuthors(), author);
+        if (position == values.size() - 1){
+            System.out.println("REACH BOTTOM! LOAD THE FOOKIN' DATA");
+            runnable.run();
+        }
         return rowView;
     }
 

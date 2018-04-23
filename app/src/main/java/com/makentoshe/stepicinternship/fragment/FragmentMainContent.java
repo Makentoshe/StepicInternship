@@ -10,8 +10,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.makentoshe.stepicinternship.R;
-import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.adapter.CourseArrayAdapter;
+import com.makentoshe.stepicinternship.common.StepicAPI;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 
 import java.util.ArrayList;
@@ -28,6 +28,12 @@ public class FragmentMainContent extends Fragment {
     private ListView coursesList;
     private ArrayList<SearchModel.SearchResult> coursesDataList = new ArrayList<>();
     private CourseArrayAdapter mAdapter;
+    private int mPage = 1;
+    private String mQuery;
+    private String mLanguage;
+
+    // подгрузка элементов списка при достижении нижней границы
+    private static final boolean enableLoading = true;
 
     public static FragmentMainContent newInstance() {
         FragmentMainContent fragment = new FragmentMainContent();
@@ -38,10 +44,34 @@ public class FragmentMainContent extends Fragment {
 
     /**
      * Called when need to parse and update courses view and data.
+     *
+     * @param searchModel model with courses data in it.
+     * @param is_popular
+     * @param is_public
+     * @param language
+     * @param query
+     * @param type
+     */
+    public void receiveSearchModel(SearchModel searchModel, boolean is_popular, boolean is_public, String language, String query, String type) {
+        updateView((ArrayList<SearchModel.SearchResult>) searchModel.getSearchResults());
+        mPage = 1;
+        mLanguage = language;
+        mQuery = query;
+    }
+
+    /**
+     * Called when need to parse and update courses view and data.
+     *
      * @param searchModel model with courses data in it.
      */
-    public void receiveSearchModel(SearchModel searchModel){
-        updateView((ArrayList<SearchModel.SearchResult>) searchModel.getSearchResults());
+    public void receiveSearchModel(SearchModel searchModel, int page, boolean is_add) {
+        if (searchModel == null) return;
+        if (is_add) {
+            addView((ArrayList<SearchModel.SearchResult>) searchModel.getSearchResults());
+        } else {
+            updateView((ArrayList<SearchModel.SearchResult>) searchModel.getSearchResults());
+        }
+        mPage = page;
     }
 
     @Override
@@ -49,8 +79,31 @@ public class FragmentMainContent extends Fragment {
         View root = inflater.inflate(R.layout.fragment_maincontent, container, false);
         // Get reference of widget from XML layout
         coursesList = root.findViewById(R.id.Fragment_MainContent_ListView);
+        // Create loader
+        Runnable runnable;
+        if (enableLoading){
+            runnable = () -> {
+                Callback<SearchModel> callback = new Callback<SearchModel>() {
+                    @Override
+                    public void onResponse(Call<SearchModel> call, Response<SearchModel> response) {
+                        SearchModel model = response.body();
+                        receiveSearchModel(model, mPage, true);
+                    }
+
+                    @Override
+                    public void onFailure(Call<SearchModel> call, Throwable t) {
+                        Toast.makeText(getContext(), "Something go wrong", Toast.LENGTH_SHORT).show();
+                        t.printStackTrace();
+                    }
+                };
+                mPage++;
+                StepicAPI.search(true, true, mLanguage, mQuery, "course", mPage, callback);
+            };
+        } else {
+            runnable = () -> {};
+        }
         // Create an ArrayAdapter from List
-        mAdapter = new CourseArrayAdapter(getContext(), coursesDataList);
+        mAdapter = new CourseArrayAdapter(getContext(), coursesDataList, runnable);
         // DataBind ListView with items from ArrayAdapter
         coursesList.setAdapter(mAdapter);
         start();
@@ -61,12 +114,11 @@ public class FragmentMainContent extends Fragment {
      * Load courses by default to show.
      */
     private void start() {
-        Call<SearchModel> call = StepicInternship.getApi().getSearchResult(true, true, "ru", "", "course");
-        call.enqueue(new Callback<SearchModel>() {
+        Callback<SearchModel> callback = new Callback<SearchModel>() {
             @Override
             public void onResponse(Call<SearchModel> call, Response<SearchModel> response) {
                 SearchModel model = response.body();
-                receiveSearchModel(model);
+                receiveSearchModel(model, 1, false);
             }
 
             @Override
@@ -74,16 +126,30 @@ public class FragmentMainContent extends Fragment {
                 Toast.makeText(getActivity().getApplicationContext(), "Something go wrong", Toast.LENGTH_SHORT).show();
                 t.printStackTrace();
             }
-        });
-
+        };
+        StepicAPI.search(
+                true,
+                true,
+                "ru",
+                "",
+                "course",
+                1,
+                callback
+        );
     }
 
     /**
      * Update view to show new loaded courses.
+     *
      * @param newResults list on new courses/
      */
-    private void updateView(ArrayList<SearchModel.SearchResult> newResults){
+    private void updateView(ArrayList<SearchModel.SearchResult> newResults) {
+        coursesList.setScrollY(0);
         coursesDataList.clear();
+        addView(newResults);
+    }
+
+    private void addView(ArrayList<SearchModel.SearchResult> newResults) {
         coursesDataList.addAll(newResults);
         mAdapter.notifyDataSetChanged();
     }

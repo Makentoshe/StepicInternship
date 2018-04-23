@@ -1,13 +1,14 @@
 package com.makentoshe.stepicinternship.common;
 
+import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.common.model.AutoCompleteModel;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 import com.makentoshe.stepicinternship.common.model.UserModel;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.http.GET;
-import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
@@ -29,7 +30,16 @@ public interface StepicAPI {
                                       @Query("is_public") boolean is_public,
                                       @Query("language") String language,
                                       @Query("query") String query,
-                                      @Query("type") String type);
+                                      @Query("type") String type,
+                                      @Query("page") int page);
+
+    static void search(boolean is_popular, boolean is_public, String language, String query, String type, int page, Callback<SearchModel> callback){
+        Call<SearchModel> call = StepicInternship
+                        .getApi()
+                        .getSearchResult(is_popular, is_public, language, query, type, page);
+
+        call.enqueue(callback);
+    }
 
     @GET
     Call<ResponseBody> getCover(@Url String url);
