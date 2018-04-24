@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">StepicInternship</string>
     <string name="search_string_ex">Search catalog</string>
+    <string-array name="activity_course_title_list">
+        <item>Information</item>
+        <item>Reviews</item>
+        <item>Syllabus</item>
+        <item>Comments</item>
+        <item>News</item>
+    </string-array>
 </resources>

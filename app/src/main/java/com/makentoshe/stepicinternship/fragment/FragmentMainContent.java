@@ -1,5 +1,6 @@
 package com.makentoshe.stepicinternship.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.makentoshe.stepicinternship.R;
+import com.makentoshe.stepicinternship.activity.ActivityCourse;
 import com.makentoshe.stepicinternship.adapter.CourseArrayAdapter;
 import com.makentoshe.stepicinternship.common.StepicAPI;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
@@ -108,6 +110,11 @@ public class FragmentMainContent extends Fragment {
         // DataBind ListView with items from ArrayAdapter
         coursesList.setAdapter(mAdapter);
         start();
+        coursesList.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent = new Intent(getContext(), ActivityCourse.class);
+            intent.putExtra(ActivityCourse.EXTRA_COURSE, coursesDataList.get(position));
+            startActivity(intent);
+        });
         return root;
     }
 

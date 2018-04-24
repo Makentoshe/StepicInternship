@@ -2,6 +2,7 @@ package com.makentoshe.stepicinternship.common;
 
 import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.common.model.AutoCompleteModel;
+import com.makentoshe.stepicinternship.common.model.CourseModel;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 import com.makentoshe.stepicinternship.common.model.UserModel;
 
@@ -46,4 +47,7 @@ public interface StepicAPI {
 
     @GET("/api/users/{USER_ID}")
     Call<UserModel> getUser(@Path("USER_ID") int id);
+
+    @GET("api/courses/{ID}")
+    Call<CourseModel> getCourseData(@Path("ID") int id);
 }

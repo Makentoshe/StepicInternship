@@ -14,62 +14,62 @@ public class DefaultActivityLogic extends ActivityLogic {
 
     @Override
     public void _onCreate(@Nullable Bundle savedInstanceState) {
-        log.info("call onCreate before UI");
+        log.info(this.getClass().getSimpleName() + " call onCreate before UI");
     }
 
     @Override
     public void _onStart() {
-        log.info("call onStart before UI");
+        log.info(this.getClass().getSimpleName() + " call onStart before UI");
     }
 
     @Override
     public void _onDestroy() {
-        log.info("call onDestroy before UI");
+        log.info(this.getClass().getSimpleName() + " call onDestroy before UI");
     }
 
     @Override
     public void _onStop() {
-        log.info("call onStop before UI");
+        log.info(this.getClass().getSimpleName() + " call onStop before UI");
     }
 
     @Override
     public void _onResume() {
-        log.info("call onResume before UI");
+        log.info(this.getClass().getSimpleName() + " call onResume before UI");
     }
 
     @Override
     public void _onRestart() {
-        log.info("call onRestart before UI");
+        log.info(this.getClass().getSimpleName() + " call onRestart before UI");
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        log.info("call onCreate after UI");
+        log.info(this.getClass().getSimpleName() +  " call onCreate after UI");
     }
 
     @Override
     public void onStart() {
-        log.info("call onStart after UI");
+        log.info(this.getClass().getSimpleName() +  " call onStart after UI");
     }
 
     @Override
     public void onDestroy() {
-        log.info("call onDestroy after UI");
+        log.info(this.getClass().getSimpleName() + " call onDestroy after UI");
     }
 
     @Override
     public void onStop() {
-        log.info("call onStop after UI");
+        log.info(this.getClass().getSimpleName() + " call onStop after UI");
     }
 
     @Override
     public void onResume() {
-        log.info("call onResume after UI");
+        log.info(this.getClass().getSimpleName() + " call onResume after UI");
     }
 
     @Override
     public void onRestart() {
-        log.info("call onRestart after UI");
+        log.info(this.getClass().getSimpleName() + " call onRestart after UI");
     }
 
 }

@@ -1,10 +1,8 @@
 package com.makentoshe.stepicinternship.common.model;
 
 import android.graphics.Bitmap;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -143,7 +141,7 @@ public class SearchModel {
         @Expose
         private Object commentText;
 
-        private Bitmap preview;
+        private transient Bitmap preview;
 
         private String author;
 
