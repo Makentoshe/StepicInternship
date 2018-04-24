@@ -1,8 +1,12 @@
 package com.makentoshe.stepicinternship.activity;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +65,13 @@ public class ActivityCourse extends Activity<ActivityCourse.ActivityCourseLogic>
         }
 
         private void createTitleList(CourseModel.Course mCourse) {
+            final int[] progress = {0};
+            ProgressBar progressBar = findViewById(R.id.ActivityCourse_ProgressBar);
+            progressBar.setMax(mCourse.getSections().size());
+            progressBar.setProgress(progress[0]);
+            progressBar.setScaleY(2f);
+            progressBar.setIndeterminate(true);
+
             ExpandableListView titleList = findViewById(R.id.ActivityCourse_ExpListView);
             // коллекция для групп
             ArrayList<Map<String, String>> groupDataList = new ArrayList<>();
@@ -88,7 +99,6 @@ public class ActivityCourse extends Activity<ActivityCourse.ActivityCourseLogic>
                             map = new HashMap<>();
                             // Название секции
                             map.put("groupName", section.getTitle());
-                            System.out.println("Group Name: " + section.getTitle());
                             // Заполняем
                             groupDataList.add(map);
                             //// Загружаем дочерние элементы
@@ -112,8 +122,12 @@ public class ActivityCourse extends Activity<ActivityCourse.ActivityCourseLogic>
                                                 Map<String, String> map = new HashMap<>();
                                                 // название урока
                                                 map.put("monthName", response.body().getLessons().get(0).getTitle());
-                                                System.out.println("ElementName: " + response.body().getLessons().get(0).getTitle());
                                                 сhildDataItem.add(map);
+                                                progressBar.setIndeterminate(false);
+                                                progressBar.setProgress(++progress[0]);
+                                                if (progress[0] == progressBar.getMax()){
+                                                    progressBar.setVisibility(View.GONE);
+                                                }
                                             }
 
                                             @Override
