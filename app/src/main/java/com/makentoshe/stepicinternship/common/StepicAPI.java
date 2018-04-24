@@ -3,7 +3,10 @@ package com.makentoshe.stepicinternship.common;
 import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.common.model.AutoCompleteModel;
 import com.makentoshe.stepicinternship.common.model.CourseModel;
+import com.makentoshe.stepicinternship.common.model.LessonModel;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
+import com.makentoshe.stepicinternship.common.model.SectionModel;
+import com.makentoshe.stepicinternship.common.model.UnitModel;
 import com.makentoshe.stepicinternship.common.model.UserModel;
 
 import okhttp3.ResponseBody;
@@ -50,4 +53,13 @@ public interface StepicAPI {
 
     @GET("api/courses/{ID}")
     Call<CourseModel> getCourseData(@Path("ID") int id);
+
+    @GET("api/sections/{ID}")
+    Call<SectionModel> getSectionData(@Path("ID") int id);
+
+    @GET("api/units/{ID}")
+    Call<UnitModel> getUnitData(@Path("ID") int id);
+
+    @GET("api/lessons/{ID}")
+    Call<LessonModel> getLessonData(@Path("ID") int id);
 }
