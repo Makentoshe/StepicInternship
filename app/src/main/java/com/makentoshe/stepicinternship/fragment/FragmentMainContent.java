@@ -28,9 +28,9 @@ public class FragmentMainContent extends Fragment {
     private ListView coursesList;
     private ArrayList<SearchModel.SearchResult> coursesDataList = new ArrayList<>();
     private CourseArrayAdapter mAdapter;
-    private int mPage = 1;
-    private String mQuery;
-    private String mLanguage;
+    private int mPage = 1; //Текущая страница
+    private String mQuery; //Текущий запрос
+    private String mLanguage; //Текущий язык запроса
 
     // подгрузка элементов списка при достижении нижней границы
     private static final boolean enableLoading = true;
@@ -81,7 +81,7 @@ public class FragmentMainContent extends Fragment {
         coursesList = root.findViewById(R.id.Fragment_MainContent_ListView);
         // Create loader
         Runnable runnable;
-        if (enableLoading){
+        if (enableLoading) {
             runnable = () -> {
                 Callback<SearchModel> callback = new Callback<SearchModel>() {
                     @Override
@@ -100,7 +100,8 @@ public class FragmentMainContent extends Fragment {
                 StepicAPI.search(true, true, mLanguage, mQuery, "course", mPage, callback);
             };
         } else {
-            runnable = () -> {};
+            runnable = () -> {
+            };
         }
         // Create an ArrayAdapter from List
         mAdapter = new CourseArrayAdapter(getContext(), coursesDataList, runnable);
@@ -158,6 +159,7 @@ public class FragmentMainContent extends Fragment {
     public void onDestroyView() {
         coursesList = null;
         coursesDataList = null;
+        mAdapter.onDestroy();
         mAdapter = null;
         super.onDestroyView();
     }

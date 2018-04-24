@@ -12,6 +12,14 @@ public class StepicInternship extends Application {
     private static StepicAPI stepicAPI;
     private Retrofit mRetrofit;
 
+    //settings
+    /**
+     * Data will be download and delete after using. If you need this data again,
+     * you need download it's again(true).
+     * Otherwise the data will be storage in memory and access will be instant(false).
+     */
+    public static final boolean save_memory_mode = false;
+
     @Override
     public void onCreate() {
         super.onCreate();

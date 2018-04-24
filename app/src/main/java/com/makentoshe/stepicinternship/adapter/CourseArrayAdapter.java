@@ -1,6 +1,7 @@
 package com.makentoshe.stepicinternship.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.makentoshe.stepicinternship.R;
 import com.makentoshe.stepicinternship.StepicInternship;
@@ -53,53 +55,88 @@ public class CourseArrayAdapter extends ArrayAdapter<SearchModel.SearchResult> {
         SearchModel.SearchResult result = values.get(position);
         //fill view
         title.setText(result.getCourseTitle());
-        setBitmap(result.getCourseCover(), previewImage);
-        setAuthor(result.getCourseAuthors(), author);
-        if (position == values.size() - 1){
+        setBitmap(result, previewImage);
+        setAuthor(result, author);
+        if (position == values.size() - 1) {
             System.out.println("REACH BOTTOM! LOAD THE FOOKIN' DATA");
             runnable.run();
         }
         return rowView;
     }
 
-    private void setBitmap(String url, ImageView imageView) {
-        Call<ResponseBody> call = StepicInternship.getApi().getCover(url);
+    private void setBitmap(SearchModel.SearchResult course, ImageView imageView) {
+        //if not save data - skip, else try to get it.
+        if (!StepicInternship.save_memory_mode) {
+            if (course.getPreview() != null) {
+                imageView.setImageBitmap(course.getPreview());
+                return;
+            }
+        }
+        //no data - download it
+        Call<ResponseBody> call = StepicInternship.getApi().getCover(course.getCourseCover());
         call.enqueue(
                 new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                imageView.setImageBitmap(BitmapFactory.decodeStream(response.body().byteStream()));
+                                Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
+                                imageView.setImageBitmap(bitmap);
+                                //if not save memory - skip
+                                if (!StepicInternship.save_memory_mode){
+                                    course.setPreview(bitmap);
+                                }
                             }
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                        Toast.makeText(getContext(), "Failed to load preview", Toast.LENGTH_LONG).show();
+                        t.printStackTrace();
                     }
                 }
         );
+
     }
 
-    private void setAuthor(List<Integer> authorsId, TextView view){
+    private void setAuthor(SearchModel.SearchResult course, TextView view) {
+        //if not save data - skip, else try to get it.
+        if (!StepicInternship.save_memory_mode) {
+            if (course.getPreview() != null) {
+                view.setText(course.getAuthor());
+                return;
+            }
+        }
+        //no data - download it
         StringBuilder sb = new StringBuilder();
-        for(Integer id : authorsId){
+        for (Integer id : course.getCourseAuthors()) {
             Call<UserModel> call = StepicInternship.getApi().getUser(id);
             call.enqueue(new Callback<UserModel>() {
                 @Override
                 public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                     sb.append(", ").append(response.body().getUsers().get(0).getFullName());
-                    view.setText(sb.toString().substring(2));
+                    String text = sb.toString().substring(2);
+                    view.setText(text);
+                    //if not save memory - skip
+                    if (!StepicInternship.save_memory_mode) {
+                        course.setAuthor(text);
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<UserModel> call, Throwable t) {
-
+                    Toast.makeText(getContext(), "Failed to load authors", Toast.LENGTH_LONG).show();
+                    t.printStackTrace();
                 }
             });
         }
     }
 
+    public void onDestroy() {
+        for (SearchModel.SearchResult value : values) {
+            value.getPreview().recycle();
+            value.setPreview(null);
+        }
+    }
 }

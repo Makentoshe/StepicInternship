@@ -1,5 +1,7 @@
 package com.makentoshe.stepicinternship.common.model;
 
+import android.graphics.Bitmap;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -140,6 +142,26 @@ public class SearchModel {
         @SerializedName("comment_text")
         @Expose
         private Object commentText;
+
+        private Bitmap preview;
+
+        private String author;
+
+        public Bitmap getPreview() {
+            return preview;
+        }
+
+        public void setPreview(Bitmap preview) {
+            this.preview = preview;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
+        }
 
         public Integer getId() {
             return id;
