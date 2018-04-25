@@ -1,31 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ActivityMain_Toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:minHeight="?attr/actionBarSize"
-    android:theme="?attr/toolbarStyle">
+    android:theme="?attr/toolbarStyle"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <com.makentoshe.stepicinternship.view.DelayAutoCompleteTextView
+
             android:id="@+id/ActivityMain_Toolbar_SearchTextView"
             android:layout_width="match_parent"
             android:layout_height="42dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_quad"
+            android:elevation="2dp"
+            android:hint="@string/search_string_ex"
             android:maxLines="1"
             android:singleLine="true"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
-            android:background="@drawable/rounded_quad"
-            android:hint="@string/search_string_ex"
-            android:textColorHint="@color/hint_font"
             android:textColor="@color/font"
-            android:elevation="2dp"/>
+            android:textColorHint="@color/hint_font"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </FrameLayout>
+        <ProgressBar
+            android:id="@+id/ActivityMain_Toolbar_ProgressBar"
+            style="@style/Base.Widget.AppCompat.ProgressBar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignEnd="@+id/ActivityMain_Toolbar_SearchTextView"
+            android:layout_alignRight="@+id/ActivityMain_Toolbar_SearchTextView"
+            android:layout_alignTop="@+id/ActivityMain_Toolbar_SearchTextView"
+            android:elevation="3dp"
+            android:visibility="gone"
+            android:background="@color/transparent"/>
+
+    </RelativeLayout>
 
 </android.support.v7.widget.Toolbar>
+

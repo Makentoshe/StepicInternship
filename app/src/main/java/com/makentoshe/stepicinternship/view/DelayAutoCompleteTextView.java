@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.AttributeSet;
+import android.widget.ProgressBar;
 
 import java.lang.ref.SoftReference;
 
@@ -22,6 +23,7 @@ public class DelayAutoCompleteTextView extends AppCompatAutoCompleteTextView {
     private int mAutoCompleteDelay = DEFAULT_AUTOCOMPLETE_DELAY;
 
     private SoftReference<Handler> mHandler;
+    private ProgressBar mProgressBar;
 
     private SoftReference<Handler> createHandler(){
        mHandler = new SoftReference<>(new Handler(Looper.getMainLooper()) {
@@ -53,11 +55,20 @@ public class DelayAutoCompleteTextView extends AppCompatAutoCompleteTextView {
         this.mAutoCompleteDelay = autoCompleteDelay;
     }
 
+    public void setAutoCompleteProgressBar(ProgressBar bar){
+        mProgressBar = bar;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected void performFiltering(CharSequence text, int keyCode) {
+        if (mProgressBar != null){
+            mProgressBar.setVisibility(VISIBLE);
+//            mProgressBar.setMax(DEFAULT_AUTOCOMPLETE_DELAY);
+//            mProgressBar.setProgress(0);
+        }
         //send message if the time has passed
         getHandler().removeMessages(MESSAGE_TEXT_CHANGED);
         getHandler().sendMessageDelayed(getHandler().obtainMessage(MESSAGE_TEXT_CHANGED, text), mAutoCompleteDelay);
@@ -68,6 +79,9 @@ public class DelayAutoCompleteTextView extends AppCompatAutoCompleteTextView {
      */
     @Override
     public void onFilterComplete(int count) {
+        if (mProgressBar != null){
+            mProgressBar.setVisibility(GONE);
+        }
         super.onFilterComplete(count);
     }
 
@@ -75,6 +89,7 @@ public class DelayAutoCompleteTextView extends AppCompatAutoCompleteTextView {
         getHandler().removeMessages(MESSAGE_TEXT_CHANGED);
         mHandler.clear();
         mHandler = null;
+        mProgressBar = null;
     }
 
     /**

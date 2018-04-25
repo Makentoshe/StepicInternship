@@ -82,6 +82,7 @@ public class ActivityMain extends Activity<ActivityMain.ActivityMainLogic> {
         private void createSearchTextView() {
             DelayAutoCompleteTextView searchTextView = findViewById(R.id.ActivityMain_Toolbar_SearchTextView);
             AutoCompleteSearchAdapter adapter = new AutoCompleteSearchAdapter(ActivityMain.this);
+            searchTextView.setAutoCompleteProgressBar(findViewById(R.id.ActivityMain_Toolbar_ProgressBar));
             searchTextView.setAdapter(adapter);
             searchTextView.setOnItemClickListener((parent, view, position, id) ->
                     startSearch(
@@ -158,4 +159,11 @@ public class ActivityMain extends Activity<ActivityMain.ActivityMainLogic> {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ((DelayAutoCompleteTextView)
+                findViewById(R.id.ActivityMain_Toolbar_SearchTextView)
+        ).releaseMemory();
+    }
 }
