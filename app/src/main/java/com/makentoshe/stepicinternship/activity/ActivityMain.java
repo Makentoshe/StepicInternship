@@ -8,7 +8,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.makentoshe.stepicinternship.R;
@@ -56,6 +60,7 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     private void createSearchTextView() {
+        ImageView clearIcon = findViewById(R.id.ActivityMain_Toolbar_Clear);
         DelayAutoCompleteTextView searchTextView = findViewById(R.id.ActivityMain_Toolbar_SearchTextView);
         AutoCompleteSearchAdapter adapter = new AutoCompleteSearchAdapter(ActivityMain.this);
         searchTextView.setAutoCompleteProgressBar(findViewById(R.id.ActivityMain_Toolbar_ProgressBar));
@@ -82,6 +87,29 @@ public class ActivityMain extends AppCompatActivity {
             }
             return false;
         });
+        searchTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.length() != 0){
+                    clearIcon.setVisibility(View.VISIBLE);
+                } else {
+                    clearIcon.setVisibility(View.GONE);
+                }
+            }
+        });
+        clearIcon.setOnClickListener((v -> {
+            searchTextView.setText("");
+        }));
     }
 
     private void startSearch(boolean is_popular, boolean is_public, String language, String query, String type) {

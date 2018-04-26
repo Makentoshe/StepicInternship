@@ -5,10 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:minHeight="?attr/actionBarSize"
-    android:theme="?attr/toolbarStyle"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    android:theme="?attr/toolbarStyle">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -44,8 +41,23 @@
             android:layout_alignRight="@+id/ActivityMain_Toolbar_SearchTextView"
             android:layout_alignTop="@+id/ActivityMain_Toolbar_SearchTextView"
             android:elevation="3dp"
-            android:visibility="gone"
+
             android:background="@color/transparent"/>
+
+        <ImageView
+            android:id="@+id/ActivityMain_Toolbar_Clear"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignBottom="@+id/ActivityMain_Toolbar_SearchTextView"
+            android:layout_alignEnd="@+id/ActivityMain_Toolbar_SearchTextView"
+            android:layout_alignLeft="@+id/ActivityMain_Toolbar_ProgressBar"
+            android:layout_alignRight="@+id/ActivityMain_Toolbar_SearchTextView"
+            android:layout_alignStart="@+id/ActivityMain_Toolbar_ProgressBar"
+            android:layout_alignTop="@+id/ActivityMain_Toolbar_SearchTextView"
+            android:background="@color/transparent"
+            android:elevation="3dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_clear" />
 
     </RelativeLayout>
 
