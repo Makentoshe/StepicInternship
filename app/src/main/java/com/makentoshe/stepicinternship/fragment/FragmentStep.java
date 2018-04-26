@@ -77,7 +77,7 @@ public class FragmentStep extends Fragment {
        if (block.getVideo() != null){
            //video
             setVideo(root, block);
-            return;
+
        }
        if (block.getAnimation() != null){
            //animation ?!?!?!
@@ -85,7 +85,7 @@ public class FragmentStep extends Fragment {
        }
        if (block.getText() != null){
            setText(root, block);
-            return;
+
        }
        if (block.getOptions() != null){
            //code
