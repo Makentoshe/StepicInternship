@@ -1,8 +1,8 @@
 package com.makentoshe.stepicinternship.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleExpandableListAdapter;
@@ -20,7 +20,6 @@ import com.makentoshe.stepicinternship.common.model.UnitModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,6 @@ public class ActivityCourse extends Activity<ActivityCourse.ActivityCourseLogic>
 
     public static final String EXTRA_COURSE = "CourseData";
     private CourseModel.Course mCourse;
-    private boolean loadingWait = true;
 
     @Override
     public ActivityCourseLogic newLogicInstance() {
@@ -219,7 +217,9 @@ public class ActivityCourse extends Activity<ActivityCourse.ActivityCourseLogic>
             expandableListView.setAdapter(adapter);
 
             expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
-                System.out.println(lessonsList.get(groupPosition).get(childPosition).getTitle());
+                Intent intent = new Intent(ActivityCourse.this, ActivityLesson.class);
+                intent.putExtra(ActivityLesson.LESSON_EXTRA, lessonsList.get(groupPosition).get(childPosition));
+                startActivity(intent);
                 return false;
             });
         }

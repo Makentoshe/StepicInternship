@@ -6,6 +6,7 @@ import com.makentoshe.stepicinternship.common.model.CourseModel;
 import com.makentoshe.stepicinternship.common.model.LessonModel;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 import com.makentoshe.stepicinternship.common.model.SectionModel;
+import com.makentoshe.stepicinternship.common.model.StepModel;
 import com.makentoshe.stepicinternship.common.model.UnitModel;
 import com.makentoshe.stepicinternship.common.model.UserModel;
 
@@ -62,4 +63,7 @@ public interface StepicAPI {
 
     @GET("api/lessons/{ID}")
     Call<LessonModel> getLessonData(@Path("ID") int id);
+
+    @GET("api/steps/{ID}")
+    Call<StepModel> getStepData(@Path("ID") int id);
 }

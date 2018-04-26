@@ -1,46 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.makentoshe.stepicinternship.activity.ActivityMain">
+    android:layout_height="match_parent">
 
     <include
-        android:id="@+id/ActivityMain_IncludeToolbar"
-        layout="@layout/activity_main_toolbar"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:id="@+id/include"
+        layout="@layout/activity_lesson_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="IncludeLayoutParam" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.design.widget.TabLayout
-        android:id="@+id/ActivityMain_TabLayout"
+        android:id="@+id/ActivityLesson_TabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ActivityMain_IncludeToolbar"
+        app:layout_constraintTop_toBottomOf="@+id/include"
         app:tabGravity="fill"
-        app:tabMode="fixed"
+        app:tabMode="scrollable"
         app:tabSelectedTextColor="@color/colorAccent"
         app:tabTextColor="#FFF" />
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/ActivityMain_ViewPager"
+        android:id="@+id/ActivityLesson_ViewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ActivityMain_TabLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/ActivityLesson_TabLayout" />
 
 </android.support.constraint.ConstraintLayout>

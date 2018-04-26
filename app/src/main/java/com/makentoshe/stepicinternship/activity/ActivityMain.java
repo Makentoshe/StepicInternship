@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
-import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.activity.logic.DefaultActivityLogic;
 
 import com.makentoshe.stepicinternship.R;
@@ -66,7 +65,7 @@ public class ActivityMain extends Activity<ActivityMain.ActivityMainLogic> {
         }
 
         private void createTabs() {
-            ViewPager viewPager = findViewById(R.id.pager);
+            ViewPager viewPager = findViewById(R.id.ActivityMain_ViewPager);
             ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
             FragmentMainContent fragmentMainContent = FragmentMainContent.newInstance();
@@ -75,7 +74,7 @@ public class ActivityMain extends Activity<ActivityMain.ActivityMainLogic> {
 
             adapter.addFragment(FragmentFavoriteContent.newInstance(), "Favorites");
             viewPager.setAdapter(adapter);
-            TabLayout tabLayout = findViewById(R.id.tabs);
+            TabLayout tabLayout = findViewById(R.id.ActivityMain_TabLayout);
             tabLayout.setupWithViewPager(viewPager);
         }
 
