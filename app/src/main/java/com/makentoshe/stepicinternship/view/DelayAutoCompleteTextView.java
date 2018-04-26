@@ -66,8 +66,6 @@ public class DelayAutoCompleteTextView extends AppCompatAutoCompleteTextView {
     protected void performFiltering(CharSequence text, int keyCode) {
         if (mProgressBar != null){
             mProgressBar.setVisibility(VISIBLE);
-//            mProgressBar.setMax(DEFAULT_AUTOCOMPLETE_DELAY);
-//            mProgressBar.setProgress(0);
         }
         //send message if the time has passed
         getHandler().removeMessages(MESSAGE_TEXT_CHANGED);

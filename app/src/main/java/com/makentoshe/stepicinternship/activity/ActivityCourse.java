@@ -1,7 +1,5 @@
 package com.makentoshe.stepicinternship.activity;
 
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -21,6 +19,8 @@ import com.makentoshe.stepicinternship.common.model.SectionModel;
 import com.makentoshe.stepicinternship.common.model.UnitModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +37,7 @@ public class ActivityCourse extends Activity<ActivityCourse.ActivityCourseLogic>
 
     public static final String EXTRA_COURSE = "CourseData";
     private CourseModel.Course mCourse;
+    private boolean loadingWait = true;
 
     @Override
     public ActivityCourseLogic newLogicInstance() {
@@ -64,97 +65,68 @@ public class ActivityCourse extends Activity<ActivityCourse.ActivityCourseLogic>
             title.setText(courseTitle);
         }
 
-        private void createTitleList(CourseModel.Course mCourse) {
-            final int[] progress = {0};
-            ProgressBar progressBar = findViewById(R.id.ActivityCourse_ProgressBar);
-            progressBar.setMax(mCourse.getSections().size());
-            progressBar.setProgress(progress[0]);
-            progressBar.setScaleY(2f);
-            progressBar.setIndeterminate(true);
-
-            ExpandableListView titleList = findViewById(R.id.ActivityCourse_ExpListView);
-            // коллекция для групп
-            ArrayList<Map<String, String>> groupDataList = new ArrayList<>();
-            // список атрибутов групп для чтения
-            String groupFrom[] = new String[]{"groupName"};
-            // список ID view-элементов, в которые будет помещены атрибуты групп
-            int groupTo[] = new int[]{android.R.id.text1};
-            // создаем общую коллекцию для коллекций элементов
-            ArrayList<ArrayList<Map<String, String>>> сhildDataList = new ArrayList<>();
-            // список атрибутов элементов для чтения
-            String childFrom[] = new String[]{"monthName"};
-            // список ID view-элементов, в которые будет помещены атрибуты
-            // элементов
-            int childTo[] = new int[]{android.R.id.text1};
-
+        private void loadTitleData(ProgressBar progressBar) {
+            List<SectionModel.Section> sectionList = new ArrayList<>();
+            List<List<LessonModel.Lesson>> lessonsList = new ArrayList<>();
+            for (int i = 0; i < mCourse.getSections().size(); i++) {
+                lessonsList.add(null);
+            }
+            final int[] sectionCount = {0};
             // загружаем названия групп
             for (Integer sectionID : mCourse.getSections()) {
                 Call<SectionModel> call = StepicInternship.getApi().getSectionData(sectionID);
                 call.enqueue(new Callback<SectionModel>() {
+
                     @Override
                     public void onResponse(Call<SectionModel> call, Response<SectionModel> response) {
-                        Map<String, String> map;
-                        //заполняем названия групп названиями секций
-                        for (SectionModel.Section section : response.body().getSections()) {
-                            map = new HashMap<>();
-                            // Название секции
-                            map.put("groupName", section.getTitle());
-                            // Заполняем
-                            groupDataList.add(map);
-                            //// Загружаем дочерние элементы
-                            //// У каждой секции есть массив юнитов. У каждого юнита есть урок.
-                            // Коллекция элементов
-                            ArrayList<Map<String, String>> сhildDataItem = new ArrayList<>();
-                            // Для каждого юнита
-                            for (Integer unitID : section.getUnits()) {
-                                // загружаем его
-                                Call<UnitModel> unitCALL = StepicInternship.getApi().getUnitData(unitID);
-                                unitCALL.enqueue(new Callback<UnitModel>() {
-                                    @Override
-                                    public void onResponse(Call<UnitModel> call, Response<UnitModel> response) {
-                                        // Загрузили...
-                                        UnitModel.Unit unit = response.body().getUnits().get(0);
-                                        // Теперь загружаем урок
-                                        Call<LessonModel> LessonCALL = StepicInternship.getApi().getLessonData(unit.getLesson());
-                                        LessonCALL.enqueue(new Callback<LessonModel>() {
-                                            @Override
-                                            public void onResponse(Call<LessonModel> call, Response<LessonModel> response) {
-                                                Map<String, String> map = new HashMap<>();
-                                                // название урока
-                                                map.put("monthName", response.body().getLessons().get(0).getTitle());
-                                                сhildDataItem.add(map);
-                                                progressBar.setIndeterminate(false);
-                                                progressBar.setProgress(++progress[0]);
-                                                if (progress[0] == progressBar.getMax()){
-                                                    progressBar.setVisibility(View.GONE);
-                                                }
-                                            }
+                        SectionModel.Section section = response.body().getSections().get(0);
+                        List<LessonModel.Lesson> lessons = new ArrayList<>();
 
-                                            @Override
-                                            public void onFailure(Call<LessonModel> call, Throwable t) {
-
-                                            }
-                                        });
-
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<UnitModel> call, Throwable t) {
-
-                                    }
-                                });
-                            }
-                            // добавляем в коллекцию коллекций
-                            сhildDataList.add(сhildDataItem);
+                        for (int i = 0; i < section.getUnits().size(); i++) {
+                            lessons.add(null);
                         }
 
-                        SimpleExpandableListAdapter adapter = new SimpleExpandableListAdapter(
-                                ActivityCourse.this, groupDataList,
-                                android.R.layout.simple_expandable_list_item_1, groupFrom,
-                                groupTo, сhildDataList, android.R.layout.simple_list_item_1,
-                                childFrom, childTo);
+                        sectionList.add(section);
+                        final int[] lessonCount = {0};
+                        for (Integer unitID : section.getUnits()) {
+                            Call<UnitModel> ucall = StepicInternship.getApi().getUnitData(unitID);
+                            ucall.enqueue(new Callback<UnitModel>() {
 
-                        titleList.setAdapter(adapter);
+                                @Override
+                                public void onResponse(Call<UnitModel> call, Response<UnitModel> response) {
+                                    UnitModel.Unit unit = response.body().getUnits().get(0);
+                                    Call<LessonModel> lcall = StepicInternship.getApi().getLessonData(unit.getLesson());
+                                    lcall.enqueue(new Callback<LessonModel>() {
+
+                                        @Override
+                                        public void onResponse(Call<LessonModel> call, Response<LessonModel> response) {
+                                            lessonCount[0]++;
+                                            lessons.set(unit.getPosition() - 1, response.body().getLessons().get(0));
+                                            if (lessonCount[0] == section.getUnits().size()) {
+                                                sectionCount[0]++;
+                                                lessonsList.set(section.getPosition() - 1, lessons);
+                                                progressBar.setIndeterminate(false);
+                                                progressBar.setProgress(sectionCount[0]);
+
+                                                if (sectionCount[0] == mCourse.getSections().size()) {
+                                                    inflateTitleList(sectionList, lessonsList);
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<LessonModel> call, Throwable t) {
+
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onFailure(Call<UnitModel> call, Throwable t) {
+
+                                }
+                            });
+                        }
                     }
 
                     @Override
@@ -164,6 +136,16 @@ public class ActivityCourse extends Activity<ActivityCourse.ActivityCourseLogic>
                 });
             }
 
+        }
+
+        private void createTitleList(CourseModel.Course mCourse) {
+            ProgressBar progressBar = findViewById(R.id.ActivityCourse_ProgressBar);
+            progressBar.setMax(mCourse.getSections().size());
+            progressBar.setProgress(0);
+            progressBar.setScaleY(2f);
+            progressBar.setIndeterminate(true);
+
+            loadTitleData(progressBar);
         }
 
         private void loadCourseData(int id) {
@@ -182,6 +164,64 @@ public class ActivityCourse extends Activity<ActivityCourse.ActivityCourseLogic>
             };
             Call<CourseModel> call = StepicInternship.getApi().getCourseData(id);
             call.enqueue(callback);
+        }
+
+        private void inflateTitleList(List<SectionModel.Section> sectionList, List<List<LessonModel.Lesson>> lessonsList) {
+            Collections.sort(sectionList, (o1, o2) -> {
+                if (o1.getPosition() > o2.getPosition()) {
+                    return 1;
+                }
+                if (o1.getPosition() < o2.getPosition()) {
+                    return -1;
+                }
+                return 0;
+            });
+            // коллекция для групп
+            ArrayList<Map<String, String>> groupDataList = new ArrayList<>();
+            // список атрибутов групп для чтения
+            String groupFrom[] = new String[]{"groupName"};
+            // список ID view-элементов, в которые будет помещены атрибуты групп
+            int groupTo[] = new int[]{android.R.id.text1};
+
+            // создаем общую коллекцию для коллекций элементов
+            ArrayList<ArrayList<Map<String, String>>> childDataList = new ArrayList<>();
+            // список атрибутов элементов для чтения
+            String childFrom[] = new String[]{"monthName"};
+            // список ID view-элементов, в которые будет помещены атрибуты элементов
+            int childTo[] = new int[]{android.R.id.text1};
+
+            for (int i = 0; i < sectionList.size(); i++) {
+                HashMap<String, String> map = new HashMap<>();
+                map.put("groupName", sectionList.get(i).getTitle());
+                groupDataList.add(map);
+            }
+
+            for (List<LessonModel.Lesson> lessons : lessonsList){
+                // создаем коллекцию элементов для группы
+                ArrayList<Map<String, String>> сhildDataItemList = new ArrayList<>();
+                // заполняем список атрибутов для каждого элемента
+                for (LessonModel.Lesson lesson: lessons) {
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("monthName", lesson.getTitle()); // название месяца
+                    сhildDataItemList.add(map);
+                }
+                // добавляем в коллекцию коллекций
+                childDataList.add(сhildDataItemList);
+            }
+
+            SimpleExpandableListAdapter adapter = new SimpleExpandableListAdapter(
+                    ActivityCourse.this, groupDataList,
+                    android.R.layout.simple_expandable_list_item_1, groupFrom,
+                    groupTo, childDataList, android.R.layout.simple_list_item_1,
+                    childFrom, childTo);
+
+            ExpandableListView expandableListView = findViewById(R.id.ActivityCourse_ExpListView);
+            expandableListView.setAdapter(adapter);
+
+            expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+                System.out.println(lessonsList.get(groupPosition).get(childPosition).getTitle());
+                return false;
+            });
         }
     }
 }
