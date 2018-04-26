@@ -14,11 +14,8 @@ import android.widget.TextView;
 
 import com.makentoshe.stepicinternship.R;
 import com.makentoshe.stepicinternship.common.model.LessonModel;
-import com.makentoshe.stepicinternship.fragment.FragmentFavoriteContent;
-import com.makentoshe.stepicinternship.fragment.FragmentMainContent;
 import com.makentoshe.stepicinternship.fragment.FragmentStep;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
