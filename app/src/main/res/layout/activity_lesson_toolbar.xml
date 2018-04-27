@@ -1,22 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ActivityLesson_Toolbar"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:minHeight="?attr/actionBarSize"
+    android:orientation="horizontal"
     android:theme="?attr/toolbarStyle">
 
     <FrameLayout
+        android:id="@+id/ActivityLesson_LeftArrow"
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
+        android:padding="15dp">
+
+        <ImageView
+            android:id="@+id/ActivityLesson_LeftArrow_ImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent" />
+
+    </FrameLayout>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/ActivityLesson_Toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:theme="?attr/toolbarStyle">
 
         <TextView
             android:id="@+id/ActivityLesson_Toolbar_TextView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:autoSizeTextType="uniform"/>
+            android:layout_marginEnd="?attr/actionBarSize"
+            android:layout_marginRight="?attr/actionBarSize"
+            android:autoSizeTextType="uniform"
+            android:gravity="center" />
 
-    </FrameLayout>
+    </android.support.v7.widget.Toolbar>
 
-</android.support.v7.widget.Toolbar>
+</LinearLayout>

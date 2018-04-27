@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
@@ -32,7 +33,7 @@ import retrofit2.Response;
  * Created by Makentoshe on 24.04.2018.
  */
 
-public class ActivityCourse extends AppCompatActivity{
+public class ActivityCourse extends AppCompatActivity {
 
     public static final String EXTRA_COURSE = "CourseData";
     private CourseModel.Course mCourse;
@@ -50,6 +51,9 @@ public class ActivityCourse extends AppCompatActivity{
     private void createToolbar(String courseTitle) {
         TextView title = findViewById(R.id.ActivityCourse_Toolbar_TextView);
         title.setText(courseTitle);
+        ImageView imageView = findViewById(R.id.ActivityCourse_LeftArrow_ImageView);
+        imageView.setImageResource(R.drawable.ic_left_arrow);
+        findViewById(R.id.ActivityCourse_LeftArrow).setOnClickListener((v) -> onBackPressed());
     }
 
     private void loadTitleData(ProgressBar progressBar) {
@@ -183,11 +187,11 @@ public class ActivityCourse extends AppCompatActivity{
             groupDataList.add(map);
         }
 
-        for (List<LessonModel.Lesson> lessons : lessonsList){
+        for (List<LessonModel.Lesson> lessons : lessonsList) {
             // создаем коллекцию элементов для группы
             ArrayList<Map<String, String>> сhildDataItemList = new ArrayList<>();
             // заполняем список атрибутов для каждого элемента
-            for (LessonModel.Lesson lesson: lessons) {
+            for (LessonModel.Lesson lesson : lessons) {
                 HashMap<String, String> map = new HashMap<>();
                 map.put("monthName", lesson.getTitle()); // название месяца
                 сhildDataItemList.add(map);

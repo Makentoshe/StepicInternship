@@ -10,6 +10,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.makentoshe.stepicinternship.R;
@@ -37,16 +39,21 @@ public class ActivityLesson extends AppCompatActivity {
     }
 
     private void createToolbar(String title){
-        Toolbar toolbar = findViewById(R.id.ActivityLesson_Toolbar);
         TextView titleTV = findViewById(R.id.ActivityLesson_Toolbar_TextView);
         titleTV.setText(title);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
+        ImageView imageView = findViewById(R.id.ActivityLesson_LeftArrow_ImageView);
+        imageView.setImageResource(R.drawable.ic_left_arrow);
+        findViewById(R.id.ActivityLesson_LeftArrow).setOnClickListener((v)-> onBackPressed());
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void createTabs(LessonModel.Lesson lesson) {
