@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.makentoshe.stepicinternship.R;
@@ -170,11 +171,15 @@ public class ActivityMain extends AppCompatActivity {
         super.onResume();
         ImageView clearIcon = findViewById(R.id.ActivityMain_Toolbar_Clear);
         DelayAutoCompleteTextView searchTextView = findViewById(R.id.ActivityMain_Toolbar_SearchTextView);
+        ProgressBar bar = findViewById(R.id.ActivityMain_Toolbar_ProgressBar);
         if (searchTextView.getText().toString().length() != 0){
             clearIcon.setVisibility(View.VISIBLE);
         } else {
             clearIcon.setVisibility(View.GONE);
         }
+        //do not give the editbox focus automatically when activity starts
+        searchTextView.clearFocus();
+        bar.setVisibility(View.INVISIBLE);
     }
 
     @Override

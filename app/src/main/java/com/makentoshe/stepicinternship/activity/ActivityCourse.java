@@ -12,24 +12,17 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 import com.makentoshe.stepicinternship.R;
-import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.common.Loader;
 import com.makentoshe.stepicinternship.common.model.CourseModel;
 import com.makentoshe.stepicinternship.common.model.LessonModel;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 import com.makentoshe.stepicinternship.common.model.SectionModel;
-import com.makentoshe.stepicinternship.common.model.UnitModel;
-import com.makentoshe.stepicinternship.func.Consumer;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by Makentoshe on 24.04.2018.
