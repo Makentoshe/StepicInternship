@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">StepicInternship</string>
     <string name="search_string_ex">Search catalog</string>
+    <string name="add_to_fav">Add to favorites</string>
     <string-array name="activity_course_title_list">
         <item>Information</item>
         <item>Reviews</item>
@@ -8,4 +9,5 @@
         <item>Comments</item>
         <item>News</item>
     </string-array>
+    <string name="loading">Loading course:</string>
 </resources>

@@ -9,15 +9,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.makentoshe.stepicinternship.R;
 import com.makentoshe.stepicinternship.StepicInternship;
+import com.makentoshe.stepicinternship.common.Loader;
 import com.makentoshe.stepicinternship.common.model.CourseModel;
 import com.makentoshe.stepicinternship.common.model.LessonModel;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 import com.makentoshe.stepicinternship.common.model.SectionModel;
 import com.makentoshe.stepicinternship.common.model.UnitModel;
+import com.makentoshe.stepicinternship.func.Consumer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,63 +66,34 @@ public class ActivityCourse extends AppCompatActivity {
         final int[] sectionCount = {0};
         // загружаем названия групп
         for (Integer sectionID : mCourse.getSections()) {
-            Call<SectionModel> call = StepicInternship.getApi().getSectionData(sectionID);
-            call.enqueue(new Callback<SectionModel>() {
 
-                @Override
-                public void onResponse(Call<SectionModel> call, Response<SectionModel> response) {
-                    SectionModel.Section section = response.body().getSections().get(0);
-                    List<LessonModel.Lesson> lessons = new ArrayList<>();
+            Loader.loadSection(sectionID, section -> {
+                List<LessonModel.Lesson> lessons = new ArrayList<>();
 
-                    for (int i = 0; i < section.getUnits().size(); i++) {
-                        lessons.add(null);
-                    }
-
-                    sectionList.add(section);
-                    final int[] lessonCount = {0};
-                    for (Integer unitID : section.getUnits()) {
-                        Call<UnitModel> ucall = StepicInternship.getApi().getUnitData(unitID);
-                        ucall.enqueue(new Callback<UnitModel>() {
-
-                            @Override
-                            public void onResponse(Call<UnitModel> call, Response<UnitModel> response) {
-                                UnitModel.Unit unit = response.body().getUnits().get(0);
-                                Call<LessonModel> lcall = StepicInternship.getApi().getLessonData(unit.getLesson());
-                                lcall.enqueue(new Callback<LessonModel>() {
-
-                                    @Override
-                                    public void onResponse(Call<LessonModel> call, Response<LessonModel> response) {
-                                        lessonCount[0]++;
-                                        lessons.set(unit.getPosition() - 1, response.body().getLessons().get(0));
-                                        if (lessonCount[0] == section.getUnits().size()) {
-                                            sectionCount[0]++;
-                                            lessonsList.set(section.getPosition() - 1, lessons);
-                                            progressBar.setIndeterminate(false);
-                                            progressBar.setProgress(sectionCount[0]);
-
-                                            if (sectionCount[0] == mCourse.getSections().size()) {
-                                                inflateTitleList(sectionList, lessonsList);
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<LessonModel> call, Throwable t) {
-
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onFailure(Call<UnitModel> call, Throwable t) {
-
-                            }
-                        });
-                    }
+                for (int i = 0; i < section.getUnits().size(); i++) {
+                    lessons.add(null);
                 }
 
-                @Override
-                public void onFailure(Call<SectionModel> call, Throwable t) {
+                sectionList.add(section);
+                final int[] lessonCount = {0};
+                for (Integer unitID : section.getUnits()) {
+
+                    Loader.loadUnit(unitID, unit -> {
+                        Loader.loadLesson(unit.getLesson(), lesson -> {
+                            lessonCount[0]++;
+                            lessons.set(unit.getPosition() - 1, lesson);
+                            if (lessonCount[0] == section.getUnits().size()) {
+                                sectionCount[0]++;
+                                lessonsList.set(section.getPosition() - 1, lessons);
+                                progressBar.setIndeterminate(false);
+                                progressBar.setProgress(sectionCount[0]);
+
+                                if (sectionCount[0] == mCourse.getSections().size()) {
+                                    inflateTitleList(sectionList, lessonsList);
+                                }
+                            }
+                        });
+                    });
 
                 }
             });
@@ -140,21 +112,13 @@ public class ActivityCourse extends AppCompatActivity {
     }
 
     private void loadCourseData(int id) {
-        Callback<CourseModel> callback = new Callback<CourseModel>() {
-            @Override
-            public void onResponse(Call<CourseModel> call, Response<CourseModel> response) {
-                mCourse = response.body().getCourses().get(0);
-                createTitleList(mCourse);
+        Loader.loadCourse(id, course -> {
+            if (course == null){
+                return;
             }
-
-            @Override
-            public void onFailure(Call<CourseModel> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Unable to load course data", Toast.LENGTH_LONG).show();
-                t.printStackTrace();
-            }
-        };
-        Call<CourseModel> call = StepicInternship.getApi().getCourseData(id);
-        call.enqueue(callback);
+            mCourse = course;
+            createTitleList(course);
+        });
     }
 
     private void inflateTitleList(List<SectionModel.Section> sectionList, List<List<LessonModel.Lesson>> lessonsList) {

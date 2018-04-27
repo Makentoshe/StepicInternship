@@ -4,15 +4,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.makentoshe.stepicinternship.R;
 import com.makentoshe.stepicinternship.activity.ActivityCourse;
 import com.makentoshe.stepicinternship.adapter.CourseArrayAdapter;
+import com.makentoshe.stepicinternship.common.Favorites;
 import com.makentoshe.stepicinternship.common.StepicAPI;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 
@@ -115,7 +119,28 @@ public class FragmentMainContent extends Fragment {
             intent.putExtra(ActivityCourse.EXTRA_COURSE, coursesDataList.get(position));
             startActivity(intent);
         });
+
+        coursesList.setOnItemLongClickListener((parent, view, position, id) -> {
+            showPopup(view, position);
+            return false;
+        });
         return root;
+    }
+
+    private void showPopup(View v, int position){
+        PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+        popupMenu.inflate(R.menu.fragment_maincontent_popupmenu);
+
+        popupMenu.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case R.id.AddToFavorites:
+                            Favorites.add(getActivity(), coursesDataList.get(position));
+                            return true;
+                        default:
+                            return false;
+                    }
+                });
+        popupMenu.show();
     }
 
     /**
