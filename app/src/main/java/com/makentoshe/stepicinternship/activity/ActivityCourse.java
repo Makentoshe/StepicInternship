@@ -50,67 +50,6 @@ public class ActivityCourse extends AppCompatActivity {
         findViewById(R.id.ActivityCourse_LeftArrow).setOnClickListener((v) -> onBackPressed());
     }
 
-    private void loadTitleData(CourseModel.Course course, ProgressBar progressBar) {
-        //список со всеми сегментами, в конце будет отсортирован
-        List<SectionModel.Section> sectionList = new ArrayList<>();
-        //список со списками всех уроков. в конце будет отсортирован по урокам и сегментам тоже
-        //все уроки второго сегмента: lessonsList.get(1)
-        //пятый урок первого сегмента: lessonsList.get(0).get(4)
-        List<List<LessonModel.Lesson>> lessonsList = new ArrayList<>();
-        //Заполняем пустыми данными, что бы занять место под все секции
-        for (int i = 0; i < course.getSections().size(); i++) {
-            lessonsList.add(null);
-        }
-        //текущее количество секций
-        final int[] sectionCount = {0};
-        //для каждой секции
-        for (Integer sectionID : course.getSections()) {
-            //скачиваем её
-            Loader.loadSection(sectionID, section -> {
-                //лист со всеми уроками в текущей секции
-                List<LessonModel.Lesson> lessons = new ArrayList<>();
-                //Заполняем пустыми данными, что бы занять место
-                for (int i = 0; i < section.getUnits().size(); i++) {
-                    lessons.add(null);
-                }
-                //добавляем секцию в список секций
-                sectionList.add(section);
-                //количество уроков в текущей секции
-                final int[] lessonCount = {0};
-                //для каждого юнита в текущей секции
-                for (Integer unitID : section.getUnits()) {
-                    //скачиваем
-                    Loader.loadUnit(unitID, unit ->
-                            //todo стоит ли сохранять юнит?
-                            //скачиваем из юнита урок.
-                            Loader.loadLesson(unit.getLesson(), lesson -> {
-                                //уеличиваем счетчик уроков
-                                lessonCount[0]++;
-                                //вставляем урок на свою позицию в текущий список уроков
-                                lessons.set(unit.getPosition() - 1, lesson);
-                                //если все уроки в секции скачаны
-                                if (lessonCount[0] == section.getUnits().size()) {
-                                    //увеличиваем счетчик секций
-                                    sectionCount[0]++;
-                                    //кладем список уроков в список со списками уроков.
-                                    lessonsList.set(section.getPosition() - 1, lessons);
-                                    //обновляем прогресс бар
-                                    progressBar.setIndeterminate(false);
-                                    progressBar.setProgress(sectionCount[0]);
-                                    //если все уроки и секции скачаны
-                                    if (sectionCount[0] == course.getSections().size()) {
-                                        inflateTitleList(sectionList, lessonsList);
-                                    }
-                                }
-                            }));
-
-                }
-            });
-        }
-
-    }
-
-
     private void loadCourseData(int id) {
         ProgressBar progressBar = findViewById(R.id.ActivityCourse_ProgressBar);
         Loader.loadCourse(id, course -> {
@@ -125,20 +64,14 @@ public class ActivityCourse extends AppCompatActivity {
             progressBar.setScaleY(2f);
             progressBar.setIndeterminate(true);
 
-            loadTitleData(course, progressBar);
+            Loader.loadCourseMainDataWithProgress(
+                    course, progressBar, (sections, unitsList, lessonsList) -> {
+                inflateTitleList(sections, lessonsList);
+            });
         });
     }
 
     private void inflateTitleList(List<SectionModel.Section> sectionList, List<List<LessonModel.Lesson>> lessonsList) {
-        Collections.sort(sectionList, (o1, o2) -> {
-            if (o1.getPosition() > o2.getPosition()) {
-                return 1;
-            }
-            if (o1.getPosition() < o2.getPosition()) {
-                return -1;
-            }
-            return 0;
-        });
         // коллекция для групп
         ArrayList<Map<String, String>> groupDataList = new ArrayList<>();
         // список атрибутов групп для чтения
