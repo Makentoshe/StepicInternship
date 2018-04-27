@@ -166,6 +166,18 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        ImageView clearIcon = findViewById(R.id.ActivityMain_Toolbar_Clear);
+        DelayAutoCompleteTextView searchTextView = findViewById(R.id.ActivityMain_Toolbar_SearchTextView);
+        if (searchTextView.getText().toString().length() != 0){
+            clearIcon.setVisibility(View.VISIBLE);
+        } else {
+            clearIcon.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         ((DelayAutoCompleteTextView)

@@ -78,7 +78,7 @@ public class DelayAutoCompleteTextView extends AppCompatAutoCompleteTextView {
     @Override
     public void onFilterComplete(int count) {
         if (mProgressBar != null){
-            mProgressBar.setVisibility(GONE);
+            mProgressBar.setVisibility(INVISIBLE);
         }
         super.onFilterComplete(count);
     }
