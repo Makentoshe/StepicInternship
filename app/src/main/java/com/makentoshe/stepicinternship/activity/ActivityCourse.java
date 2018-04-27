@@ -1,6 +1,7 @@
 package com.makentoshe.stepicinternship.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -37,7 +38,6 @@ import retrofit2.Response;
 public class ActivityCourse extends AppCompatActivity {
 
     public static final String EXTRA_COURSE = "CourseData";
-    private CourseModel.Course mCourse;
 
 
     @Override
@@ -57,43 +57,59 @@ public class ActivityCourse extends AppCompatActivity {
         findViewById(R.id.ActivityCourse_LeftArrow).setOnClickListener((v) -> onBackPressed());
     }
 
-    private void loadTitleData(ProgressBar progressBar) {
+    private void loadTitleData(CourseModel.Course course, ProgressBar progressBar) {
+        //список со всеми сегментами, в конце будет отсортирован
         List<SectionModel.Section> sectionList = new ArrayList<>();
+        //список со списками всех уроков. в конце будет отсортирован по урокам и сегментам тоже
+        //все уроки второго сегмента: lessonsList.get(1)
+        //пятый урок первого сегмента: lessonsList.get(0).get(4)
         List<List<LessonModel.Lesson>> lessonsList = new ArrayList<>();
-        for (int i = 0; i < mCourse.getSections().size(); i++) {
+        //Заполняем пустыми данными, что бы занять место под все секции
+        for (int i = 0; i < course.getSections().size(); i++) {
             lessonsList.add(null);
         }
+        //текущее количество секций
         final int[] sectionCount = {0};
-        // загружаем названия групп
-        for (Integer sectionID : mCourse.getSections()) {
-
+        //для каждой секции
+        for (Integer sectionID : course.getSections()) {
+            //скачиваем её
             Loader.loadSection(sectionID, section -> {
+                //лист со всеми уроками в текущей секции
                 List<LessonModel.Lesson> lessons = new ArrayList<>();
-
+                //Заполняем пустыми данными, что бы занять место
                 for (int i = 0; i < section.getUnits().size(); i++) {
                     lessons.add(null);
                 }
-
+                //добавляем секцию в список секций
                 sectionList.add(section);
+                //количество уроков в текущей секции
                 final int[] lessonCount = {0};
+                //для каждого юнита в текущей секции
                 for (Integer unitID : section.getUnits()) {
-
-                    Loader.loadUnit(unitID, unit -> {
-                        Loader.loadLesson(unit.getLesson(), lesson -> {
-                            lessonCount[0]++;
-                            lessons.set(unit.getPosition() - 1, lesson);
-                            if (lessonCount[0] == section.getUnits().size()) {
-                                sectionCount[0]++;
-                                lessonsList.set(section.getPosition() - 1, lessons);
-                                progressBar.setIndeterminate(false);
-                                progressBar.setProgress(sectionCount[0]);
-
-                                if (sectionCount[0] == mCourse.getSections().size()) {
-                                    inflateTitleList(sectionList, lessonsList);
+                    //скачиваем
+                    Loader.loadUnit(unitID, unit ->
+                            //todo стоит ли сохранять юнит?
+                            //скачиваем из юнита урок.
+                            Loader.loadLesson(unit.getLesson(), lesson -> {
+                                //уеличиваем счетчик уроков
+                                lessonCount[0]++;
+                                //вставляем урок на свою позицию в текущий список уроков
+                                lessons.set(unit.getPosition() - 1, lesson);
+                                //если все уроки в секции скачаны
+                                if (lessonCount[0] == section.getUnits().size()) {
+                                    //увеличиваем счетчик секций
+                                    sectionCount[0]++;
+                                    //кладем список уроков в список со списками уроков.
+                                    lessonsList.set(section.getPosition() - 1, lessons);
+                                    //обновляем прогресс бар
+                                    progressBar.setIndeterminate(false);
+                                    progressBar.setProgress(sectionCount[0]);
+                                    //если все уроки и секции скачаны
+                                    if (sectionCount[0] == course.getSections().size()) {
+                                        inflateTitleList(sectionList, lessonsList);
+                                    }
                                 }
-                            }
-                        });
-                    });
+                            }));
 
                 }
             });
@@ -101,23 +117,22 @@ public class ActivityCourse extends AppCompatActivity {
 
     }
 
-    private void createTitleList(CourseModel.Course mCourse) {
-        ProgressBar progressBar = findViewById(R.id.ActivityCourse_ProgressBar);
-        progressBar.setMax(mCourse.getSections().size());
-        progressBar.setProgress(0);
-        progressBar.setScaleY(2f);
-        progressBar.setIndeterminate(true);
-
-        loadTitleData(progressBar);
-    }
 
     private void loadCourseData(int id) {
+        ProgressBar progressBar = findViewById(R.id.ActivityCourse_ProgressBar);
         Loader.loadCourse(id, course -> {
-            if (course == null){
+            if (course == null) {
+                progressBar.setMax(1);
+                progressBar.setProgress(1);
+                progressBar.setBackgroundColor(Color.RED);
                 return;
             }
-            mCourse = course;
-            createTitleList(course);
+            progressBar.setMax(course.getSections().size());
+            progressBar.setProgress(0);
+            progressBar.setScaleY(2f);
+            progressBar.setIndeterminate(true);
+
+            loadTitleData(course, progressBar);
         });
     }
 
