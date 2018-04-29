@@ -40,14 +40,6 @@ public interface StepicAPI {
                                       @Query("type") String type,
                                       @Query("page") int page);
 
-    static void search(boolean is_popular, boolean is_public, String language, String query, String type, int page, Callback<SearchModel> callback){
-        Call<SearchModel> call = StepicInternship
-                        .getApi()
-                        .getSearchResult(is_popular, is_public, language, query, type, page);
-
-        call.enqueue(callback);
-    }
-
     @GET
     Call<ResponseBody> getCover(@Url String url);
 

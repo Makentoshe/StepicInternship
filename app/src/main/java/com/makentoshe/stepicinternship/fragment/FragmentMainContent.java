@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.makentoshe.stepicinternship.R;
+import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.activity.ActivityCourse;
 import com.makentoshe.stepicinternship.adapter.CourseArrayAdapter;
 import com.makentoshe.stepicinternship.common.Favorites;
@@ -103,7 +104,11 @@ public class FragmentMainContent extends Fragment {
                     }
                 };
                 mPage++;
-                StepicAPI.search(true, true, mLanguage, mQuery, "course", mPage, callback);
+                Call<SearchModel> call = StepicInternship
+                        .getApi()
+                        .getSearchResult(true, true, mLanguage, mQuery, "course", mPage);
+
+                call.enqueue(callback);
             };
         } else {
             runnable = () -> {
@@ -120,14 +125,11 @@ public class FragmentMainContent extends Fragment {
             startActivity(intent);
         });
 
-        coursesList.setOnItemLongClickListener((parent, view, position, id) -> {
-            showPopup(view, position);
-            return true;
-        });
+        coursesList.setOnItemLongClickListener((parent, view, position, id) -> showPopup(view, position));
         return root;
     }
 
-    private void showPopup(View v, int position) {
+    private boolean showPopup(View v, int position) {
         PopupMenu popupMenu = new PopupMenu(getActivity(), v);
         popupMenu.inflate(R.menu.fragment_maincontent_popupmenu);
 
@@ -141,6 +143,7 @@ public class FragmentMainContent extends Fragment {
             }
         });
         popupMenu.show();
+        return true;
     }
 
     private void addToFavorites(int position) {
@@ -166,15 +169,18 @@ public class FragmentMainContent extends Fragment {
                 t.printStackTrace();
             }
         };
-        StepicAPI.search(
-                true,
-                true,
-                "ru",
-                "",
-                "course",
-                1,
-                callback
-        );
+
+        Call<SearchModel> call = StepicInternship.getApi()
+                .getSearchResult(
+                        true,
+                        true,
+                        "ru",
+                        "",
+                        "course",
+                        1
+                );
+
+        call.enqueue(callback);
     }
 
     /**

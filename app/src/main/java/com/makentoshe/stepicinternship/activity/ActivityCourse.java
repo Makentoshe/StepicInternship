@@ -12,11 +12,13 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 import com.makentoshe.stepicinternship.R;
+import com.makentoshe.stepicinternship.common.Favorites;
 import com.makentoshe.stepicinternship.common.Loader;
 import com.makentoshe.stepicinternship.common.model.CourseModel;
 import com.makentoshe.stepicinternship.common.model.LessonModel;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 import com.makentoshe.stepicinternship.common.model.SectionModel;
+import com.makentoshe.stepicinternship.common.model.UnitModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,12 +34,12 @@ public class ActivityCourse extends AppCompatActivity {
 
     public static final String EXTRA_COURSE = "CourseData";
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
-        SearchModel.SearchResult course = (SearchModel.SearchResult) getIntent().getSerializableExtra(EXTRA_COURSE);
+        SearchModel.SearchResult course =
+                (SearchModel.SearchResult) getIntent().getSerializableExtra(EXTRA_COURSE);
         loadCourseData(course.getCourse());
         createToolbar(course.getCourseTitle());
     }
@@ -59,19 +61,27 @@ public class ActivityCourse extends AppCompatActivity {
                 progressBar.setBackgroundColor(Color.RED);
                 return;
             }
-            progressBar.setMax(course.getSections().size());
-            progressBar.setProgress(0);
-            progressBar.setScaleY(2f);
-            progressBar.setIndeterminate(true);
+            List<Integer> courseIds = Favorites.getSavedCourses();
 
-            Loader.loadCourseMainDataWithProgress(
-                    course, progressBar, (sections, unitsList, lessonsList) -> {
-                inflateTitleList(sections, lessonsList);
-            });
+            if (courseIds.contains(course.getId())) {
+                Favorites.getCourse(course,
+                        (sections, unitsList, lessonsList) -> inflateTitleList(sections, lessonsList));
+
+            } else {
+                progressBar.setMax(course.getSections().size());
+                progressBar.setProgress(0);
+                progressBar.setScaleY(2f);
+                progressBar.setIndeterminate(true);
+
+                Loader.loadCourseMainDataWithProgress(course, progressBar,
+                        (sections, unitsList, lessonsList) -> inflateTitleList(sections, lessonsList)
+                );
+            }
         });
     }
 
-    private void inflateTitleList(List<SectionModel.Section> sectionList, List<List<LessonModel.Lesson>> lessonsList) {
+    private void inflateTitleList
+            (List<SectionModel.Section> sectionList, List<List<LessonModel.Lesson>> lessonsList) {
         // коллекция для групп
         ArrayList<Map<String, String>> groupDataList = new ArrayList<>();
         // список атрибутов групп для чтения

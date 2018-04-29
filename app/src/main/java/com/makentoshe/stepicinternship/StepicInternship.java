@@ -2,6 +2,7 @@ package com.makentoshe.stepicinternship;
 
 import android.app.Application;
 
+import com.makentoshe.stepicinternship.common.Favorites;
 import com.makentoshe.stepicinternship.common.StepicAPI;
 
 import java.util.concurrent.TimeUnit;

@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.makentoshe.stepicinternship.R;
+import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.adapter.AutoCompleteSearchAdapter;
 import com.makentoshe.stepicinternship.common.StepicAPI;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
@@ -129,7 +130,9 @@ public class ActivityMain extends AppCompatActivity {
             }
         };
 
-        StepicAPI.search(is_popular, is_public, language, query, type, 1, callback);
+        Call<SearchModel> call = StepicInternship.getApi()
+                .getSearchResult(is_popular, is_public, language, query, type, 1);
+        call.enqueue(callback);
     }
 
     // Adapter for the viewpager using FragmentPagerAdapter
