@@ -10,12 +10,14 @@ import com.makentoshe.stepicinternship.common.model.StepModel;
 import com.makentoshe.stepicinternship.common.model.UnitModel;
 import com.makentoshe.stepicinternship.common.model.UserModel;
 
+import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 /**
@@ -66,4 +68,8 @@ public interface StepicAPI {
 
     @GET("api/steps/{ID}")
     Call<StepModel> getStepData(@Path("ID") int id);
+
+    @Streaming
+    @GET
+    Call<ResponseBody> getVideo(@Url String url);
 }

@@ -135,8 +135,10 @@ public class CourseArrayAdapter extends ArrayAdapter<SearchModel.SearchResult> {
 
     public void onDestroy() {
         for (SearchModel.SearchResult value : values) {
-            value.getPreview().recycle();
-            value.setPreview(null);
+            if (value.getPreview() != null){
+                value.getPreview().recycle();
+                value.setPreview(null);
+            }
         }
     }
 }

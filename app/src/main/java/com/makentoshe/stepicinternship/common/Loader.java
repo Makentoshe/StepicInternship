@@ -7,6 +7,7 @@ import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.common.model.CourseModel;
 import com.makentoshe.stepicinternship.common.model.LessonModel;
 import com.makentoshe.stepicinternship.common.model.SectionModel;
+import com.makentoshe.stepicinternship.common.model.StepModel;
 import com.makentoshe.stepicinternship.common.model.UnitModel;
 import com.makentoshe.stepicinternship.func.Consumer;
 import com.makentoshe.stepicinternship.func.TriConsumer;
@@ -90,6 +91,22 @@ public class Loader {
 
             @Override
             public void onFailure(Call<LessonModel> call, Throwable t) {
+                t.printStackTrace();
+                consumer.accept(null);
+            }
+        });
+    }
+
+    public static void loadStep(int stepID, Consumer<StepModel.Step> consumer){
+        Call<StepModel> call = StepicInternship.getApi().getStepData(stepID);
+        call.enqueue(new Callback<StepModel>() {
+            @Override
+            public void onResponse(Call<StepModel> call, Response<StepModel> response) {
+               consumer.accept(response.body().getSteps().get(0));
+            }
+
+            @Override
+            public void onFailure(Call<StepModel> call, Throwable t) {
                 t.printStackTrace();
                 consumer.accept(null);
             }
@@ -184,4 +201,5 @@ public class Loader {
             });
         }
     }
+
 }

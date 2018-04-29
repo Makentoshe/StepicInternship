@@ -10,4 +10,5 @@
         <item>News</item>
     </string-array>
     <string name="loading">Loading course:</string>
+    <string name="loading_finished">Loading was finish</string>
 </resources>
