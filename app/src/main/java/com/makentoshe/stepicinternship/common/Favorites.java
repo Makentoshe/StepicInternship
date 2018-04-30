@@ -33,12 +33,7 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-/**
- * Created by Makentoshe on 27.04.2018.
- */
 //todo добавить проверку на повреждение/удаление файлов
 public class Favorites {
 
@@ -75,7 +70,7 @@ public class Favorites {
             Call<CourseModel> call = StepicInternship.getApi().getCourseData(rawCourse.getCourse());
             try {
                 CourseModel.Course course = call.execute().body().getCourses().get(0);
-                if (rawCourse.getAuthor() != null){
+                if (rawCourse.getAuthor() != null) {
                     course.setAuthor(rawCourse.getAuthor());
                 } else {
                     //no data - download it
@@ -100,7 +95,7 @@ public class Favorites {
             this.context = null;
             service.stopSelf();
         });
-        thread.setPriority(3);
+        thread.setPriority(2);
         thread.start();
 
     }
@@ -111,18 +106,20 @@ public class Favorites {
                     StepicInternship.getApi().getSectionData(course.getSections().get(i));
 
             SectionModel.Section section = section_call.execute().body().getSections().get(0);
-            File section_dir = saveSectionData(parentDir, section);
+            File section_dir = saveSectionData(parentDir, section, i);
             loadLessons(section_dir, section);
         }
     }
 
     private void loadLessons(File parentDir, SectionModel.Section section) throws IOException {
+        int lessonNum = 0;
         for (Integer unitID : section.getUnits()) {
             Call<UnitModel> unit_call = StepicInternship.getApi().getUnitData(unitID);
             UnitModel.Unit unit = unit_call.execute().body().getUnits().get(0);
             Call<LessonModel> lesson_call = StepicInternship.getApi().getLessonData(unit.getLesson());
             LessonModel.Lesson lesson = lesson_call.execute().body().getLessons().get(0);
-            File lesson_dir = saveLesson(parentDir, unit, lesson);
+            File lesson_dir = saveLesson(parentDir, unit, lesson, lessonNum);
+            lessonNum++;
             loadSteps(lesson_dir, lesson);
         }
     }
@@ -139,7 +136,7 @@ public class Favorites {
     }
 
     private void loadVideo(File parentDir, StepModel.Step step) throws IOException {
-        File filePath = new File(parentDir + File.separator + step.getPosition() + "_stepV");
+        File filePath = new File(parentDir + File.separator + step.getPosition() + ".stepV");
         StepModel.Url url = step.getBlock().getVideo().getUrls().get(0);
         int q = 360;
         for (StepModel.Url _url : step.getBlock().getVideo().getUrls()) {
@@ -153,7 +150,7 @@ public class Favorites {
         saveFile(filePath, call.execute().body().byteStream());
     }
 
-    private static void saveFile(File filePath, InputStream inputStream){
+    private static void saveFile(File filePath, InputStream inputStream) {
         OutputStream os = null;
         try {
             os = new FileOutputStream(filePath);
@@ -190,8 +187,10 @@ public class Favorites {
         return courseDir;
     }
 
-    private File saveSectionData(File parentDir, SectionModel.Section section) {
-        File sectionDir = new File(parentDir + File.separator + section.getTitle());
+    private File saveSectionData(File parentDir, SectionModel.Section section, int sectionNum) {
+        File sectionDir = new File(parentDir + File.separator +
+                sectionNum + "." + section.getTitle());
+
         if (!sectionDir.exists() && !sectionDir.isDirectory()) {
             //create empty directory
             sectionDir.mkdir();
@@ -204,13 +203,16 @@ public class Favorites {
         return sectionDir;
     }
 
-    private File saveLesson(File parentDir, UnitModel.Unit unit, LessonModel.Lesson lesson) {
-        File lessonDir = new File(parentDir + File.separator + lesson.getTitle().replace("/", "\\"));
+    private File saveLesson(File parentDir, UnitModel.Unit unit, LessonModel.Lesson lesson, int lessonNum) {
+        File lessonDir = new File(parentDir + File.separator +
+                lessonNum + "." + lesson.getTitle().replace("/", "\\"));
+
         if (!lessonDir.exists() && !lessonDir.isDirectory()) {
             //create empty directory
             lessonDir.mkdir();
             System.out.println("Create dir: " + lessonDir.getPath());
         }
+
         Gson gson = new Gson();
         File filePathLesson = new File(lessonDir + File.separator + lessonFileName);
         File filePathUnit = new File(lessonDir + File.separator + unitFileName);
@@ -223,7 +225,7 @@ public class Favorites {
     }
 
     private void saveStep(File parentDir, StepModel.Step step) {
-        File filePath = new File(parentDir + File.separator + step.getPosition() + "_step");
+        File filePath = new File(parentDir + File.separator + step.getPosition() + ".step");
         Gson gson = new Gson();
         String str = gson.toJson(step);
         saveFile(filePath, str);
@@ -261,31 +263,31 @@ public class Favorites {
 
     public static List<Integer> getSavedCourses() {
         List<Integer> savedCourseIDs = new ArrayList<>();
-            //for each course
-            for (final File fileEntry : getSavedCourseFolders()) {
-                if (fileEntry.isDirectory()) {
-                    //files in courses folder
-                    for (final File innerFiles : fileEntry.listFiles()) {
-                        //define, that the "file" is really file
-                        if (innerFiles.isFile() && innerFiles.getPath().contains(courseFileName)) {
-                            try {
-                                Gson gson = new Gson();
-                                CourseModel.Course course = gson.fromJson(
-                                        new FileReader(innerFiles), CourseModel.Course.class
-                                );
-                                savedCourseIDs.add(course.getId());
-                            } catch (IOException ioe) {
-                                ioe.printStackTrace();
-                            }
+        //for each course
+        for (final File fileEntry : getSavedCourseFolders()) {
+            if (fileEntry.isDirectory()) {
+                //files in courses folder
+                for (final File innerFiles : fileEntry.listFiles()) {
+                    //define, that the "file" is really file
+                    if (innerFiles.isFile() && innerFiles.getPath().contains(courseFileName)) {
+                        try {
+                            Gson gson = new Gson();
+                            CourseModel.Course course = gson.fromJson(
+                                    new FileReader(innerFiles), CourseModel.Course.class
+                            );
+                            savedCourseIDs.add(course.getId());
+                        } catch (IOException ioe) {
+                            ioe.printStackTrace();
                         }
                     }
                 }
             }
-            return savedCourseIDs;
+        }
+        return savedCourseIDs;
     }
 
-    public static List<File> getSavedCourseFolders(){
-        if (mainDir.exists()){
+    public static List<File> getSavedCourseFolders() {
+        if (mainDir.exists()) {
             return Arrays.asList(mainDir.listFiles());
         }
         return Collections.emptyList();
@@ -306,7 +308,7 @@ public class Favorites {
         }
     }
 
-    private static File findCourseFolder(int courseID) throws IOException {
+    public static File findCourseFolder(int courseID) throws IOException {
         //папки со всеми курсами
         for (final File courseFolder : mainDir.listFiles()) {
             //внутри папки курса - секции и файл, описывающий курс

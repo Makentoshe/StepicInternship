@@ -141,9 +141,17 @@ public class ActivityCourse extends AppCompatActivity {
         expandableListView.setAdapter(adapter);
 
         expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
-            Intent intent = new Intent(ActivityCourse.this, ActivityLesson.class);
-            intent.putExtra(ActivityLesson.LESSON_EXTRA, lessonsList.get(groupPosition).get(childPosition));
-            startActivity(intent);
+            if (isSaved){
+                Intent intent = new Intent(ActivityCourse.this, ActivityLesson.class);
+                intent.putExtra(ActivityLesson.PARENT_POSITION, groupPosition);
+                intent.putExtra(ActivityLesson.CHILD_POSITION, childPosition);
+                intent.putExtra(ActivityLesson.COURSE_ID, sectionList.get(0).getCourse());
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(ActivityCourse.this, ActivityLesson.class);
+                intent.putExtra(ActivityLesson.LESSON_EXTRA, lessonsList.get(groupPosition).get(childPosition));
+                startActivity(intent);
+            }
             return true;
         });
     }
