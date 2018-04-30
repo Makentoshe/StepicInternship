@@ -3,6 +3,7 @@ package com.makentoshe.stepicinternship.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ExpandableListView;
@@ -19,7 +20,9 @@ import com.makentoshe.stepicinternship.common.model.LessonModel;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 import com.makentoshe.stepicinternship.common.model.SectionModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +36,11 @@ public class ActivityCourse extends AppCompatActivity {
     public static final String EXTRA_RAW_COURSE = "RawCourse";
     public static final String EXTRA_COURSE = "Course";
     private boolean isSaved = false;
+    private List<SectionModel.Section> sectionList;
+    private List<List<LessonModel.Lesson>> lessonsList = null;
+
+    private static final String SECTIONS = "sections";
+    private static final String LESSONS = "lessons";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +48,19 @@ public class ActivityCourse extends AppCompatActivity {
         setContentView(R.layout.activity_course);
         SearchModel.SearchResult rawCourse =
                 (SearchModel.SearchResult) getIntent().getSerializableExtra(EXTRA_RAW_COURSE);
+        if (savedInstanceState != null) {
+            ProgressBar progressBar = findViewById(R.id.ActivityCourse_ProgressBar);
+            progressBar.setMax(1);
+            progressBar.setProgress(1);
+            progressBar.setIndeterminate(false);
+            if (rawCourse != null){
+                createToolbar(rawCourse.getCourseTitle());
+            } else {
+                CourseModel.Course course = (CourseModel.Course) getIntent().getSerializableExtra(EXTRA_COURSE);
+                createToolbar(course.getTitle());
+            }
+            return;
+        }
         if (rawCourse != null){
             loadCourseData(rawCourse.getCourse());
             createToolbar(rawCourse.getCourseTitle());
@@ -48,7 +69,16 @@ public class ActivityCourse extends AppCompatActivity {
             createToolbar(course.getTitle());
             loadCourseDataMem(course);
         }
+    }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null){
+            sectionList = (List<SectionModel.Section>) savedInstanceState.getSerializable(SECTIONS);
+            lessonsList = (List<List<LessonModel.Lesson>>) savedInstanceState.getSerializable(LESSONS);
+            inflateTitleList(sectionList, lessonsList);
+        }
     }
 
     private void loadCourseDataMem(CourseModel.Course course) {
@@ -98,6 +128,8 @@ public class ActivityCourse extends AppCompatActivity {
 
     private void inflateTitleList
             (List<SectionModel.Section> sectionList, List<List<LessonModel.Lesson>> lessonsList) {
+        this.sectionList = sectionList;
+        this.lessonsList = lessonsList;
         // коллекция для групп
         ArrayList<Map<String, String>> groupDataList = new ArrayList<>();
         // список атрибутов групп для чтения
@@ -155,4 +187,20 @@ public class ActivityCourse extends AppCompatActivity {
             return true;
         });
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (lessonsList != null){
+            ArrayList list = new ArrayList();
+            list.addAll(lessonsList);
+            outState.putSerializable(LESSONS, list);
+        }
+        if (sectionList != null){
+            ArrayList list = new ArrayList();
+            list.addAll(sectionList);
+            outState.putSerializable(SECTIONS, list);
+        }
+    }
+
 }
