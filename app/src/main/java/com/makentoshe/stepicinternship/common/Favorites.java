@@ -1,6 +1,7 @@
 package com.makentoshe.stepicinternship.common;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
 import android.os.Looper;
 import android.widget.Toast;
@@ -14,6 +15,7 @@ import com.makentoshe.stepicinternship.common.model.SearchModel;
 import com.makentoshe.stepicinternship.common.model.SectionModel;
 import com.makentoshe.stepicinternship.common.model.StepModel;
 import com.makentoshe.stepicinternship.common.model.UnitModel;
+import com.makentoshe.stepicinternship.common.model.UserModel;
 import com.makentoshe.stepicinternship.func.TriConsumer;
 import com.makentoshe.stepicinternship.service.DownloadService;
 
@@ -25,10 +27,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Makentoshe on 27.04.2018.
@@ -41,11 +47,11 @@ public class Favorites {
     private int id;
     private static File mainDir = new File(Environment.getExternalStorageDirectory() +
             File.separator + "StepicInternship");
-    private static final String videoFileExt = "mp4v";
     public static final String courseFileName = "course";
     public static final String sectionFileName = "section";
     public static final String unitFileName = "unit";
     public static final String lessonFileName = "lesson";
+    public static final String coverName = "cover";
 
     public void add(Context context, SearchModel.SearchResult rawCourse, DownloadService service) {
         Toast.makeText(
@@ -69,15 +75,28 @@ public class Favorites {
             Call<CourseModel> call = StepicInternship.getApi().getCourseData(rawCourse.getCourse());
             try {
                 CourseModel.Course course = call.execute().body().getCourses().get(0);
+                if (rawCourse.getAuthor() != null){
+                    course.setAuthor(rawCourse.getAuthor());
+                } else {
+                    //no data - download it
+                    StringBuilder sb = new StringBuilder();
+                    for (Integer id : course.getAuthors()) {
+                        Call<UserModel> user_call = StepicInternship.getApi().getUser(id);
+                        user_call.execute().body().getUsers().get(0).getFullName();
+                        sb.append(", ").append(user_call.execute().body().getUsers().get(0).getFullName());
+                        course.setAuthor(sb.toString().substring(2));
+                    }
+                }
                 File courseDir = saveCourseData(mainDir, course);
                 Call<ResponseBody> cover = StepicInternship.getApi().getCover(course.getCover());
-                saveFile(new File(courseDir + File.separator + "cover"), cover.execute().body().byteStream());
+                saveFile(new File(courseDir + File.separator + coverName), cover.execute().body().byteStream());
                 loadSections(courseDir, course);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             Looper.prepare();
             notification(context, courseName, context.getResources().getString(R.string.loading_finished), id);
+            context.sendBroadcast(new Intent(DownloadService.UPDATE_FAVORITES_MESSAGE));
             this.context = null;
             service.stopSelf();
         });
@@ -120,7 +139,7 @@ public class Favorites {
     }
 
     private void loadVideo(File parentDir, StepModel.Step step) throws IOException {
-        File filePath = new File(parentDir + File.separator + step.getPosition() + "_step." + videoFileExt);
+        File filePath = new File(parentDir + File.separator + step.getPosition() + "_stepV");
         StepModel.Url url = step.getBlock().getVideo().getUrls().get(0);
         int q = 360;
         for (StepModel.Url _url : step.getBlock().getVideo().getUrls()) {
@@ -131,31 +150,7 @@ public class Favorites {
             }
         }
         Call<ResponseBody> call = StepicInternship.getApi().getVideo(url.getUrl());
-
         saveFile(filePath, call.execute().body().byteStream());
-
-//        InputStream is = null;
-//        OutputStream os = null;
-//        try {
-//            is = call.execute().body().byteStream();
-//            os = new FileOutputStream(filePath);
-//            byte[] buffer = new byte[1024 * 4];
-//            int count;
-//            while ((count = is.read(buffer)) > -1) {
-//                os.write(buffer, 0, count);   // Don't allow any extra bytes to creep in, final write
-//            }
-//            os.flush();
-//            System.out.println("Create file: " + filePath);
-//        } catch (IOException ioe) {
-//            ioe.printStackTrace();
-//        } finally {
-//            try {
-//                if (is != null) is.close();
-//                if (os != null) os.close();
-//            } catch (IOException ioe) {
-//                ioe.printStackTrace();
-//            }
-//        }
     }
 
     private static void saveFile(File filePath, InputStream inputStream){
@@ -266,9 +261,8 @@ public class Favorites {
 
     public static List<Integer> getSavedCourses() {
         List<Integer> savedCourseIDs = new ArrayList<>();
-        if (mainDir.exists()) {
-            //courses
-            for (final File fileEntry : mainDir.listFiles()) {
+            //for each course
+            for (final File fileEntry : getSavedCourseFolders()) {
                 if (fileEntry.isDirectory()) {
                     //files in courses folder
                     for (final File innerFiles : fileEntry.listFiles()) {
@@ -288,9 +282,13 @@ public class Favorites {
                 }
             }
             return savedCourseIDs;
-        } else {
-            return new ArrayList<>();
+    }
+
+    public static List<File> getSavedCourseFolders(){
+        if (mainDir.exists()){
+            return Arrays.asList(mainDir.listFiles());
         }
+        return Collections.emptyList();
     }
 
     public static void getCourse(CourseModel.Course course,

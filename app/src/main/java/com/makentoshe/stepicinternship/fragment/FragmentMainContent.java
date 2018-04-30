@@ -15,9 +15,6 @@ import com.makentoshe.stepicinternship.R;
 import com.makentoshe.stepicinternship.StepicInternship;
 import com.makentoshe.stepicinternship.activity.ActivityCourse;
 import com.makentoshe.stepicinternship.adapter.CourseArrayAdapter;
-import com.makentoshe.stepicinternship.common.Favorites;
-import com.makentoshe.stepicinternship.common.Notifications;
-import com.makentoshe.stepicinternship.common.StepicAPI;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 import com.makentoshe.stepicinternship.service.DownloadService;
 
@@ -121,7 +118,7 @@ public class FragmentMainContent extends Fragment {
         start();
         coursesList.setOnItemClickListener((parent, view, position, id) -> {
             Intent intent = new Intent(getContext(), ActivityCourse.class);
-            intent.putExtra(ActivityCourse.EXTRA_COURSE, coursesDataList.get(position));
+            intent.putExtra(ActivityCourse.EXTRA_RAW_COURSE, coursesDataList.get(position));
             startActivity(intent);
         });
 

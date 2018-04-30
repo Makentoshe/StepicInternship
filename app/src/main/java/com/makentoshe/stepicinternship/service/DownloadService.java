@@ -34,6 +34,7 @@ import retrofit2.Response;
 public class DownloadService extends Service {
 
     public static final String COURSE_EXTRA = "RawCourse";
+    public static final String UPDATE_FAVORITES_MESSAGE = "UpdateFavPls";
 
     public DownloadService() {
         super();

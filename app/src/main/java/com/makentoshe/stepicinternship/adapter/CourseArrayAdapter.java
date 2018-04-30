@@ -31,13 +31,11 @@ import retrofit2.Response;
 
 public class CourseArrayAdapter extends ArrayAdapter<SearchModel.SearchResult> {
 
-    private final Context context;
     private final List<SearchModel.SearchResult> values;
     private final Runnable runnable;
 
     public CourseArrayAdapter(Context context, List<SearchModel.SearchResult> values, Runnable runnable) {
         super(context, R.layout.listview_item_course, values);
-        this.context = context;
         this.values = values;
         this.runnable = runnable;
     }
@@ -46,7 +44,7 @@ public class CourseArrayAdapter extends ArrayAdapter<SearchModel.SearchResult> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         //try to inflate view
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.listview_item_course, parent, false);
         //define data
         TextView title = rowView.findViewById(R.id.ListView_Item_Course_Title);

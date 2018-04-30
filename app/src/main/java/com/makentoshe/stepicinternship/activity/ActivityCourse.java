@@ -18,10 +18,8 @@ import com.makentoshe.stepicinternship.common.model.CourseModel;
 import com.makentoshe.stepicinternship.common.model.LessonModel;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 import com.makentoshe.stepicinternship.common.model.SectionModel;
-import com.makentoshe.stepicinternship.common.model.UnitModel;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,17 +30,36 @@ import java.util.Map;
 
 public class ActivityCourse extends AppCompatActivity {
 
-    public static final String EXTRA_COURSE = "CourseData";
+    public static final String EXTRA_RAW_COURSE = "RawCourse";
+    public static final String EXTRA_COURSE = "Course";
     private boolean isSaved = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
-        SearchModel.SearchResult course =
-                (SearchModel.SearchResult) getIntent().getSerializableExtra(EXTRA_COURSE);
-        loadCourseData(course.getCourse());
-        createToolbar(course.getCourseTitle());
+        SearchModel.SearchResult rawCourse =
+                (SearchModel.SearchResult) getIntent().getSerializableExtra(EXTRA_RAW_COURSE);
+        if (rawCourse != null){
+            loadCourseData(rawCourse.getCourse());
+            createToolbar(rawCourse.getCourseTitle());
+        } else {
+            CourseModel.Course course = (CourseModel.Course) getIntent().getSerializableExtra(EXTRA_COURSE);
+            createToolbar(course.getTitle());
+            loadCourseDataMem(course);
+        }
+
+    }
+
+    private void loadCourseDataMem(CourseModel.Course course) {
+        ProgressBar progressBar = findViewById(R.id.ActivityCourse_ProgressBar);
+        isSaved = true;
+        Favorites.getCourse(course,
+                (sections, unitsList, lessonsList) -> inflateTitleList(sections, lessonsList));
+        progressBar.setMax(1);
+        progressBar.setProgress(1);
+        progressBar.setIndeterminate(false);
+
     }
 
     private void createToolbar(String courseTitle) {
@@ -70,13 +87,7 @@ public class ActivityCourse extends AppCompatActivity {
             progressBar.setIndeterminate(true);
 
             if (courseIds.contains(course.getId())) {
-                isSaved = true;
-                Favorites.getCourse(course,
-                        (sections, unitsList, lessonsList) -> inflateTitleList(sections, lessonsList));
-                progressBar.setMax(1);
-                progressBar.setProgress(1);
-                progressBar.setIndeterminate(false);
-
+                loadCourseDataMem(course);
             } else {
                 Loader.loadCourseMainDataWithProgress(course, progressBar,
                         (sections, unitsList, lessonsList) -> inflateTitleList(sections, lessonsList)

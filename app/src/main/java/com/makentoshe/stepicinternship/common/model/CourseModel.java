@@ -3,6 +3,7 @@ package com.makentoshe.stepicinternship.common.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -48,7 +49,7 @@ public class CourseModel {
     public class Actions {
     }
 
-    public class Course {
+    public class Course implements Serializable{
 
         @SerializedName("id")
         @Expose
@@ -112,7 +113,7 @@ public class CourseModel {
         private Boolean isFavorite;
         @SerializedName("actions")
         @Expose
-        private Actions actions;
+        private transient Actions actions;
         @SerializedName("progress")
         @Expose
         private String progress;
@@ -302,6 +303,16 @@ public class CourseModel {
         @SerializedName("lti_secret_key")
         @Expose
         private String ltiSecretKey;
+
+        private String author = null;
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
+        }
 
         public Integer getId() {
             return id;
