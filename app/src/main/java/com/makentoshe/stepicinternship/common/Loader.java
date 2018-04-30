@@ -113,15 +113,6 @@ public class Loader {
         });
     }
 
-    public static void loadCourseMainData(CourseModel.Course course,
-                                          TriConsumer<
-                                                  List<SectionModel.Section>,
-                                                  List<List<UnitModel.Unit>>,
-                                                  List<List<LessonModel.Lesson>>
-                                                  > consumer) {
-        loadCourseMainDataWithProgress(course, null, consumer);
-    }
-
     public static void loadCourseMainDataWithProgress(CourseModel.Course course,
                                                       ProgressBar progressBar,
                                                       TriConsumer<

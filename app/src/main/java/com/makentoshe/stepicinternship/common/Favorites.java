@@ -39,17 +39,20 @@ public class Favorites {
     private Context context;
     private String courseName;
     private int id;
-    private static File mainDir = new File(Environment.getExternalStorageDirectory() + File.separator + "StepicInternship");
-    private static final String jsonFileExt = "txtj";
+    private static File mainDir = new File(Environment.getExternalStorageDirectory() +
+            File.separator + "StepicInternship");
     private static final String videoFileExt = "mp4v";
-    public static final String courseFileName = "course." + jsonFileExt;
-    public static final String sectionFileName = "section." + jsonFileExt;
-    public static final String unitFileName = "unit." + jsonFileExt;
-    public static final String lessonFileName = "lesson." + jsonFileExt;
+    public static final String courseFileName = "course";
+    public static final String sectionFileName = "section";
+    public static final String unitFileName = "unit";
+    public static final String lessonFileName = "lesson";
 
     public void add(Context context, SearchModel.SearchResult rawCourse, DownloadService service) {
-        Toast.makeText(context, context.getResources().getString(R.string.loading) + " " + rawCourse.getCourseTitle(),
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(
+                context,
+                context.getResources().getString(R.string.loading) + " " + rawCourse.getCourseTitle(),
+                Toast.LENGTH_SHORT
+        ).show();
 
         this.context = context;
         courseName = rawCourse.getCourseTitle();
@@ -67,11 +70,13 @@ public class Favorites {
             try {
                 CourseModel.Course course = call.execute().body().getCourses().get(0);
                 File courseDir = saveCourseData(mainDir, course);
+                Call<ResponseBody> cover = StepicInternship.getApi().getCover(course.getCover());
+                saveFile(new File(courseDir + File.separator + "cover"), cover.execute().body().byteStream());
                 loadSections(courseDir, course);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Looper.prepare(); //?????? debug
+            Looper.prepare();
             notification(context, courseName, context.getResources().getString(R.string.loading_finished), id);
             this.context = null;
             service.stopSelf();
@@ -127,14 +132,39 @@ public class Favorites {
         }
         Call<ResponseBody> call = StepicInternship.getApi().getVideo(url.getUrl());
 
-        InputStream is = null;
+        saveFile(filePath, call.execute().body().byteStream());
+
+//        InputStream is = null;
+//        OutputStream os = null;
+//        try {
+//            is = call.execute().body().byteStream();
+//            os = new FileOutputStream(filePath);
+//            byte[] buffer = new byte[1024 * 4];
+//            int count;
+//            while ((count = is.read(buffer)) > -1) {
+//                os.write(buffer, 0, count);   // Don't allow any extra bytes to creep in, final write
+//            }
+//            os.flush();
+//            System.out.println("Create file: " + filePath);
+//        } catch (IOException ioe) {
+//            ioe.printStackTrace();
+//        } finally {
+//            try {
+//                if (is != null) is.close();
+//                if (os != null) os.close();
+//            } catch (IOException ioe) {
+//                ioe.printStackTrace();
+//            }
+//        }
+    }
+
+    private static void saveFile(File filePath, InputStream inputStream){
         OutputStream os = null;
         try {
-            is = call.execute().body().byteStream();
             os = new FileOutputStream(filePath);
             byte[] buffer = new byte[1024 * 4];
             int count;
-            while ((count = is.read(buffer)) > -1) {
+            while ((count = inputStream.read(buffer)) > -1) {
                 os.write(buffer, 0, count);   // Don't allow any extra bytes to creep in, final write
             }
             os.flush();
@@ -143,7 +173,7 @@ public class Favorites {
             ioe.printStackTrace();
         } finally {
             try {
-                if (is != null) is.close();
+                if (inputStream != null) inputStream.close();
                 if (os != null) os.close();
             } catch (IOException ioe) {
                 ioe.printStackTrace();
@@ -198,7 +228,7 @@ public class Favorites {
     }
 
     private void saveStep(File parentDir, StepModel.Step step) {
-        File filePath = new File(parentDir + File.separator + step.getPosition() + "_step." + jsonFileExt);
+        File filePath = new File(parentDir + File.separator + step.getPosition() + "_step");
         Gson gson = new Gson();
         String str = gson.toJson(step);
         saveFile(filePath, str);
@@ -270,7 +300,7 @@ public class Favorites {
             //находим путь до курса
             File courseDir = findCourseFolder(course.getId());
             //если нашли
-            if (courseDir != null){
+            if (courseDir != null) {
                 loadData(courseDir, consumer);
             }
         } catch (IOException ioe) {
@@ -289,8 +319,8 @@ public class Favorites {
                             new FileReader(fileInCourseFolder), CourseModel.Course.class
                     );
                     //проверяем id
-                    if (course.getId() == courseID){
-                       return courseFolder; //нашли нужный
+                    if (course.getId() == courseID) {
+                        return courseFolder; //нашли нужный
                     }
                 }
             }
@@ -298,12 +328,13 @@ public class Favorites {
         return null;
     }
 
-    private static void loadData(File courseDir, TriConsumer<List<SectionModel.Section>, List<List<UnitModel.Unit>>, List<List<LessonModel.Lesson>>> consumer) throws IOException {
+    private static void loadData(File courseDir, TriConsumer<List<SectionModel.Section>,
+            List<List<UnitModel.Unit>>, List<List<LessonModel.Lesson>>> consumer) throws IOException {
         List<SectionModel.Section> sections = new ArrayList<>();
         List<List<UnitModel.Unit>> unitsList = new ArrayList<>();
         List<List<LessonModel.Lesson>> lessonsList = new ArrayList<>();
         //внутри папки курса - файл описывающий курс и секции
-        for (File courseFile : courseDir.listFiles()){
+        for (File courseFile : courseDir.listFiles()) {
             if (courseFile.isDirectory()) {
                 ArrayList<UnitModel.Unit> units = new ArrayList<>();
                 ArrayList<LessonModel.Lesson> lessons = new ArrayList<>();
@@ -321,13 +352,13 @@ public class Favorites {
                         for (int j = 0; j < sectionFile.listFiles().length; j++) {
                             File file = sectionFile.listFiles()[j];
                             //Юниты
-                            if (file.getPath().contains(unitFileName)){
+                            if (file.getPath().contains(unitFileName)) {
                                 UnitModel.Unit unit =
                                         new Gson().fromJson(new FileReader(file), UnitModel.Unit.class);
                                 units.add(unit);
                             }
                             //уроки
-                            if (file.getPath().contains(lessonFileName)){
+                            if (file.getPath().contains(lessonFileName)) {
                                 LessonModel.Lesson lesson =
                                         new Gson().fromJson(new FileReader(file), LessonModel.Lesson.class);
                                 lessons.add(lesson);

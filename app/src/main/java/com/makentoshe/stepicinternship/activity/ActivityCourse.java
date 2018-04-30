@@ -33,6 +33,7 @@ import java.util.Map;
 public class ActivityCourse extends AppCompatActivity {
 
     public static final String EXTRA_COURSE = "CourseData";
+    private boolean isSaved = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,16 +64,20 @@ public class ActivityCourse extends AppCompatActivity {
             }
             List<Integer> courseIds = Favorites.getSavedCourses();
 
+            progressBar.setMax(course.getSections().size());
+            progressBar.setProgress(0);
+            progressBar.setScaleY(2f);
+            progressBar.setIndeterminate(true);
+
             if (courseIds.contains(course.getId())) {
+                isSaved = true;
                 Favorites.getCourse(course,
                         (sections, unitsList, lessonsList) -> inflateTitleList(sections, lessonsList));
+                progressBar.setMax(1);
+                progressBar.setProgress(1);
+                progressBar.setIndeterminate(false);
 
             } else {
-                progressBar.setMax(course.getSections().size());
-                progressBar.setProgress(0);
-                progressBar.setScaleY(2f);
-                progressBar.setIndeterminate(true);
-
                 Loader.loadCourseMainDataWithProgress(course, progressBar,
                         (sections, unitsList, lessonsList) -> inflateTitleList(sections, lessonsList)
                 );
@@ -128,7 +133,7 @@ public class ActivityCourse extends AppCompatActivity {
             Intent intent = new Intent(ActivityCourse.this, ActivityLesson.class);
             intent.putExtra(ActivityLesson.LESSON_EXTRA, lessonsList.get(groupPosition).get(childPosition));
             startActivity(intent);
-            return false;
+            return true;
         });
     }
 }
