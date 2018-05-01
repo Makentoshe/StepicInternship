@@ -41,6 +41,9 @@ public class FragmentStep extends Fragment {
     private VideoView mVideoView;
     private File lessonDir;
 
+    private StepModel.Step step;
+    private String STEP_DATA = "stepData";
+
     public static FragmentStep newInstance(Integer stepId) {
         FragmentStep fragment = new FragmentStep();
         Bundle args = new Bundle();
@@ -70,12 +73,19 @@ public class FragmentStep extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_step, container, false);
 
+        if (savedInstanceState != null){
+            step = (StepModel.Step) savedInstanceState.getSerializable(STEP_DATA);
+            fillLayout(root, step);
+            return root;
+        }
+
         if (stepID != -1) {
             Call<StepModel> call = StepicInternship.getApi().getStepData(stepID);
             call.enqueue(new Callback<StepModel>() {
                 @Override
                 public void onResponse(Call<StepModel> call, Response<StepModel> response) {
-                    fillLayout(root, response.body().getSteps().get(0));
+                    step = response.body().getSteps().get(0);
+                    fillLayout(root, step);
                 }
 
                 @Override
@@ -166,6 +176,12 @@ public class FragmentStep extends Fragment {
         if (mVideoView != null) {
             mVideoView.pause();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(STEP_DATA, step);
     }
 
     @Override

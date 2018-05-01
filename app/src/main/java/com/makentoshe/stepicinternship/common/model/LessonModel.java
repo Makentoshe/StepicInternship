@@ -10,7 +10,7 @@ import java.util.List;
  * Created by Makentoshe on 24.04.2018.
  */
 
-public class LessonModel {
+public class LessonModel  implements Serializable{
 
     @SerializedName("meta")
     @Expose
@@ -409,7 +409,7 @@ public class LessonModel {
 
     }
 
-    public class Meta {
+    public class Meta implements Serializable {
 
         @SerializedName("page")
         @Expose

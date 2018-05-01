@@ -3,6 +3,7 @@ package com.makentoshe.stepicinternship.common.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class StepModel {
     }
 
 
-    public class Actions {
+    public class Actions implements Serializable{
         @SerializedName("submit")
         @Expose
         private String submit;
@@ -49,7 +50,7 @@ public class StepModel {
         }
     }
 
-    public class Block {
+    public class Block implements Serializable{
 
         @SerializedName("name")
         @Expose
@@ -158,7 +159,7 @@ public class StepModel {
 
     }
 
-    public class Options {
+    public class Options implements Serializable{
 
         @SerializedName("execution_time_limit")
         @Expose
@@ -218,7 +219,7 @@ public class StepModel {
 
     }
 
-    public class Java8 {
+    public class Java8 implements Serializable{
 
         @SerializedName("time")
         @Expose
@@ -245,7 +246,7 @@ public class StepModel {
 
     }
 
-    public class CodeTemplates {
+    public class CodeTemplates implements Serializable{
 
         @SerializedName("java8")
         @Expose
@@ -261,7 +262,7 @@ public class StepModel {
 
     }
 
-    public class Limits {
+    public class Limits implements Serializable{
 
         @SerializedName("java8")
         @Expose
@@ -277,7 +278,7 @@ public class StepModel {
 
     }
 
-    public class Step {
+    public class Step implements Serializable{
 
         @SerializedName("id")
         @Expose
@@ -568,7 +569,7 @@ public class StepModel {
 
     }
 
-    public class Url {
+    public class Url implements Serializable{
 
         @SerializedName("url")
         @Expose
@@ -595,7 +596,7 @@ public class StepModel {
 
     }
 
-    public class Video {
+    public class Video implements Serializable{
 
         @SerializedName("id")
         @Expose

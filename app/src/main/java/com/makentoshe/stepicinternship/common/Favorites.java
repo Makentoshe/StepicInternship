@@ -363,18 +363,6 @@ public class Favorites {
                                         new Gson().fromJson(new FileReader(file), LessonModel.Lesson.class);
                                 lessons.add(lesson);
                             }
-//                            //степы
-//                            if (file.getPath().contains("_step." + jsonFileExt)){
-//                                if (Character.isDigit(file.getName().charAt(0))){
-//                                    try{
-//                                        StepModel.Step step =
-//                                                new Gson().fromJson(new FileReader(file), StepModel.Step.class);
-//
-//                                    } catch (IOException ioe){
-//                                        ioe.printStackTrace();
-//                                    }
-//                                }
-//                            }
                         }
                     }
                 }

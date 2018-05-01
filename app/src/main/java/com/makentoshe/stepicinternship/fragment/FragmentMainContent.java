@@ -38,6 +38,7 @@ public class FragmentMainContent extends Fragment {
 
     // подгрузка элементов списка при достижении нижней границы
     private static final boolean enableLoading = true;
+    private static final String COURSES_DATA = "coursesData";
 
     public static FragmentMainContent newInstance() {
         FragmentMainContent fragment = new FragmentMainContent();
@@ -111,11 +112,16 @@ public class FragmentMainContent extends Fragment {
             runnable = () -> {
             };
         }
+        if (savedInstanceState != null){
+            coursesDataList = (ArrayList<SearchModel.SearchResult>) savedInstanceState.getSerializable(COURSES_DATA);
+        }
         // Create an ArrayAdapter from List
         mAdapter = new CourseArrayAdapter(getContext(), coursesDataList, runnable);
         // DataBind ListView with items from ArrayAdapter
         coursesList.setAdapter(mAdapter);
-        start();
+        if (savedInstanceState == null){
+            start();
+        }
         coursesList.setOnItemClickListener((parent, view, position, id) -> {
             Intent intent = new Intent(getContext(), ActivityCourse.class);
             intent.putExtra(ActivityCourse.EXTRA_RAW_COURSE, coursesDataList.get(position));
@@ -194,6 +200,12 @@ public class FragmentMainContent extends Fragment {
     private void addView(ArrayList<SearchModel.SearchResult> newResults) {
         coursesDataList.addAll(newResults);
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(COURSES_DATA, coursesDataList);
     }
 
     @Override

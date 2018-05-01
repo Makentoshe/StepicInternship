@@ -3,13 +3,14 @@ package com.makentoshe.stepicinternship.common.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Makentoshe on 24.04.2018.
  */
 
-public class SectionModel {
+public class SectionModel implements Serializable{
 
     @SerializedName("meta")
     @Expose
@@ -35,11 +36,11 @@ public class SectionModel {
     }
 
 
-    public class Actions {
+    public class Actions  implements Serializable{
 
     }
 
-    public class Meta {
+    public class Meta  implements Serializable{
 
         @SerializedName("page")
         @Expose
@@ -77,7 +78,7 @@ public class SectionModel {
 
     }
 
-    public class Section {
+    public class Section  implements Serializable{
 
         @SerializedName("id")
         @Expose
