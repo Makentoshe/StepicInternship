@@ -31,7 +31,7 @@ import java.util.Map;
  * Created by Makentoshe on 24.04.2018.
  */
 
-public class ActivityCourse extends AppCompatActivity {
+public class ActivityCourse extends Activity {
 
     public static final String EXTRA_RAW_COURSE = "RawCourse";
     public static final String EXTRA_COURSE = "Course";

@@ -31,7 +31,7 @@ import java.util.List;
  * Created by Makentoshe on 26.04.2018.
  */
 
-public class ActivityLesson extends AppCompatActivity {
+public class ActivityLesson extends Activity {
 
     public static final String LESSON_EXTRA = "lesson";
     public static final String CHILD_POSITION = "child";

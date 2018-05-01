@@ -1,5 +1,6 @@
 package com.makentoshe.stepicinternship.activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -33,10 +34,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ActivityMain extends AppCompatActivity {
+public class ActivityMain extends Activity {
 
     private WeakReference<FragmentMainContent> fragmentMainContentWeakReference;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,30 +102,32 @@ public class ActivityMain extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length() != 0){
+                if (s.length() != 0) {
                     clearIcon.setVisibility(View.VISIBLE);
                 } else {
                     clearIcon.setVisibility(View.GONE);
                 }
             }
         });
-        clearIcon.setOnClickListener((v -> {
-            searchTextView.setText("");
-        }));
+        clearIcon.setOnClickListener((v -> searchTextView.setText("")));
     }
 
     private void startSearch(boolean is_popular, boolean is_public, String language, String query, String type) {
+        ProgressBar bar = findViewById(R.id.ActivityMain_Toolbar_ProgressBar);
+        bar.setVisibility(View.VISIBLE);
         Callback<SearchModel> callback = new Callback<SearchModel>() {
             @Override
             public void onResponse(Call<SearchModel> call, Response<SearchModel> response) {
                 SearchModel model = response.body();
+                bar.setVisibility(View.INVISIBLE);
                 fragmentMainContentWeakReference.get()
                         .receiveSearchModel(model, is_popular, is_public, language, query, type);
             }
 
             @Override
             public void onFailure(Call<SearchModel> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Something go wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                bar.getIndeterminateDrawable().setColorFilter(Color.RED, android.graphics.PorterDuff.Mode.MULTIPLY);
                 t.printStackTrace();
             }
         };
@@ -175,7 +177,7 @@ public class ActivityMain extends AppCompatActivity {
         ImageView clearIcon = findViewById(R.id.ActivityMain_Toolbar_Clear);
         DelayAutoCompleteTextView searchTextView = findViewById(R.id.ActivityMain_Toolbar_SearchTextView);
         ProgressBar bar = findViewById(R.id.ActivityMain_Toolbar_ProgressBar);
-        if (searchTextView.getText().toString().length() != 0){
+        if (searchTextView.getText().toString().length() != 0) {
             clearIcon.setVisibility(View.VISIBLE);
         } else {
             clearIcon.setVisibility(View.GONE);

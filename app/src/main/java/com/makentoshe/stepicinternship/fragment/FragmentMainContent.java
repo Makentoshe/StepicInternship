@@ -1,6 +1,7 @@
 package com.makentoshe.stepicinternship.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.makentoshe.stepicinternship.R;
@@ -88,16 +90,20 @@ public class FragmentMainContent extends Fragment {
         Runnable runnable;
         if (enableLoading) {
             runnable = () -> {
+                ProgressBar progressBar = getActivity().findViewById(R.id.ActivityMain_Toolbar_ProgressBar);
+                progressBar.setVisibility(View.VISIBLE);
                 Callback<SearchModel> callback = new Callback<SearchModel>() {
                     @Override
                     public void onResponse(Call<SearchModel> call, Response<SearchModel> response) {
                         SearchModel model = response.body();
+                        progressBar.setVisibility(View.INVISIBLE);
                         receiveSearchModel(model, mPage, true);
                     }
 
                     @Override
                     public void onFailure(Call<SearchModel> call, Throwable t) {
-                        Toast.makeText(getContext(), "Something go wrong", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                        progressBar.getIndeterminateDrawable().setColorFilter(Color.RED, android.graphics.PorterDuff.Mode.MULTIPLY);
                         t.printStackTrace();
                     }
                 };
@@ -159,16 +165,20 @@ public class FragmentMainContent extends Fragment {
      * Load courses by default to show.
      */
     private void start() {
+        ProgressBar progressBar = getActivity().findViewById(R.id.ActivityMain_Toolbar_ProgressBar);
+        progressBar.setVisibility(View.VISIBLE);
         Callback<SearchModel> callback = new Callback<SearchModel>() {
             @Override
             public void onResponse(Call<SearchModel> call, Response<SearchModel> response) {
                 SearchModel model = response.body();
+                progressBar.setVisibility(View.INVISIBLE);
                 receiveSearchModel(model, 1, false);
             }
 
             @Override
             public void onFailure(Call<SearchModel> call, Throwable t) {
-                Toast.makeText(getActivity().getApplicationContext(), "Something go wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                progressBar.getIndeterminateDrawable().setColorFilter(Color.RED, android.graphics.PorterDuff.Mode.MULTIPLY);
                 t.printStackTrace();
             }
         };

@@ -24,6 +24,7 @@
         <activity android:name=".activity.ActivityCourse">
         </activity>
         <activity android:name=".activity.ActivityLesson" />
+        <activity android:name=".activity.ActivityCrash" />
 
         <service android:name=".service.DownloadService" />
     </application>
