@@ -1,5 +1,6 @@
 package com.makentoshe.stepicinternship.activity;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -13,6 +14,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -67,14 +69,16 @@ public class ActivityMain extends Activity {
         AutoCompleteSearchAdapter adapter = new AutoCompleteSearchAdapter(ActivityMain.this);
         searchTextView.setAutoCompleteProgressBar(findViewById(R.id.ActivityMain_Toolbar_ProgressBar));
         searchTextView.setAdapter(adapter);
-        searchTextView.setOnItemClickListener((parent, view, position, id) ->
-                startSearch(
-                        true,
-                        true,
-                        "ru",
-                        adapter.getItem(position),
-                        "course"
-                )
+        searchTextView.setOnItemClickListener((parent, view, position, id) -> {
+                    startSearch(
+                            true,
+                            true,
+                            "ru",
+                            adapter.getItem(position),
+                            "course"
+                    );
+                    hideKeyboard();
+                }
         );
         searchTextView.setOnEditorActionListener((textView, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -85,6 +89,7 @@ public class ActivityMain extends Activity {
                         searchTextView.getText().toString(),
                         "course"
                 );
+                hideKeyboard();
                 return true;
             }
             return false;
@@ -193,5 +198,17 @@ public class ActivityMain extends Activity {
         ((DelayAutoCompleteTextView)
                 findViewById(R.id.ActivityMain_Toolbar_SearchTextView)
         ).releaseMemory();
+    }
+
+    private boolean hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                return true;
+            }
+        }
+        return false;
     }
 }
