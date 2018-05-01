@@ -113,7 +113,6 @@ public class ActivityCourse extends Activity {
 
             progressBar.setMax(course.getSections().size());
             progressBar.setProgress(0);
-            progressBar.setScaleY(2f);
             progressBar.setIndeterminate(true);
 
             if (courseIds.contains(course.getId())) {
