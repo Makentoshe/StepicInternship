@@ -3,14 +3,16 @@ package com.makentoshe.stepicinternship.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.makentoshe.stepicinternship.R;
 import com.makentoshe.stepicinternship.common.Favorites;
@@ -19,10 +21,9 @@ import com.makentoshe.stepicinternship.common.model.CourseModel;
 import com.makentoshe.stepicinternship.common.model.LessonModel;
 import com.makentoshe.stepicinternship.common.model.SearchModel;
 import com.makentoshe.stepicinternship.common.model.SectionModel;
+import com.makentoshe.stepicinternship.service.DownloadService;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,11 +94,39 @@ public class ActivityCourse extends Activity {
     }
 
     private void createToolbar(String courseTitle) {
+        Toolbar toolbar = findViewById(R.id.ActivityCourse_Toolbar);
+        setSupportActionBar(toolbar);
+
         TextView title = findViewById(R.id.ActivityCourse_Toolbar_TextView);
         title.setText(courseTitle);
         ImageView imageView = findViewById(R.id.ActivityCourse_LeftArrow_ImageView);
         imageView.setImageResource(R.drawable.ic_left_arrow);
         findViewById(R.id.ActivityCourse_LeftArrow).setOnClickListener((v) -> onBackPressed());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_course_overflowmenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_to_fav: {
+                Intent intent = new Intent(this, DownloadService.class);
+                SearchModel.SearchResult rawCourse =
+                        (SearchModel.SearchResult) getIntent().getSerializableExtra(EXTRA_RAW_COURSE);
+                if (rawCourse != null){
+                    intent.putExtra(DownloadService.COURSE_EXTRA, rawCourse);
+                    startService(intent);
+                } else {
+                    Toast.makeText(this, R.string.loaded_now, Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+        }
+        return false;
     }
 
     private void loadCourseData(int id) {
